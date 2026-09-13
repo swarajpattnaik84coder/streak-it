@@ -43,7 +43,7 @@ export default function XpBar({
 
   return (
     <div className="flex items-center gap-2.5 min-w-0">
-      <span className="text-[10px] text-rpg-muted shrink-0 font-cinzel tracking-widest hidden sm:block">
+      <span className="text-[10px] text-amber-400/90 font-bold shrink-0 font-cinzel tracking-widest hidden sm:block">
         LV. {level}
       </span>
       <button
@@ -126,9 +126,8 @@ export default function XpBar({
           Level {nextLevel} Gate Sealed • Ascension Trial Required
         </span>
       ) : (
-        <span className="text-[10px] tabular-nums text-rpg-muted shrink-0 hidden md:block">
-          {current.toLocaleString()}/{max.toLocaleString()}
-          <span className="text-stone-700 ml-1">xp</span>
+        <span className="text-xs font-semibold tracking-wider text-amber-300 tabular-nums shrink-0 hidden md:inline-flex items-center gap-1 font-cinzel drop-shadow-[0_0_6px_rgba(245,158,11,0.65)] [text-shadow:_0_0_8px_rgba(245,158,11,0.6)]">
+          {current.toLocaleString()} / {max.toLocaleString()} XP
         </span>
       )}
     </div>

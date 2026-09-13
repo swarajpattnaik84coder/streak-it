@@ -190,14 +190,14 @@ export function AuthProvider({ children }) {
                 let newCurrency = prevU.currency + (t.currencyReward || 50);
                 let newLevel = prevU.level;
                 let newXpToNext = prevU.xpToNext;
-                let points = prevU.unallocatedStatPoints || 0;
+                let points = Math.max(0, prevU.unallocatedStatPoints || 0);
 
                 if (newXp >= newXpToNext) {
                   newLevel += 1;
                   newXp -= newXpToNext;
                   newXpToNext = Math.round(newXpToNext * 1.25);
-                  points += 3;
-                  setLevelUpMessage(`LEVEL UP! You reached Level ${newLevel}! +3 Attribute Points earned!`);
+                  points += 1;
+                  setLevelUpMessage(`LEVEL UP! You reached Level ${newLevel}! +1 Attribute Point earned!`);
                   setTimeout(() => setLevelUpMessage(null), 5000);
                 }
 
@@ -238,13 +238,14 @@ export function AuthProvider({ children }) {
     } catch (err) {
       // Fallback local allocation
       setUser((prev) => {
-        if ((prev.unallocatedStatPoints || 0) <= 0) return prev;
-        const newStats = prev.stats.map((s) =>
-          s.key === statKey ? { ...s, value: Math.min(100, s.value + 2) } : s
+        const currentPoints = Math.max(0, prev.unallocatedStatPoints || 0);
+        if (currentPoints <= 0) return prev;
+        const newStats = (prev.stats || []).map((s) =>
+          s.key === statKey ? { ...s, value: Math.min(100, s.value + 1) } : s
         );
         return {
           ...prev,
-          unallocatedStatPoints: prev.unallocatedStatPoints - 1,
+          unallocatedStatPoints: Math.max(0, currentPoints - 1),
           stats: newStats,
         };
       });

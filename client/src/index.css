@@ -1,9 +1,10 @@
-@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Marcellus&family=Marcellus+SC&display=swap");
 @import "tailwindcss";
 
 @theme {
-  --font-cinzel:        "Cinzel", serif;
-  --font-crimson:       "Crimson Text", serif;
+  --font-assassin:      "Cinzel Decorative", "Cinzel", "Marcellus SC", "Marcellus", serif;
+  --font-cinzel:        "Cinzel Decorative", "Cinzel", "Marcellus SC", "Marcellus", serif;
+  --font-crimson:       "Marcellus", "Crimson Pro", "Cinzel", serif;
 
   /* Old Dusty Parchment & Antique Wood Palette */
   --color-rpg-gold:     #c49339;
@@ -31,7 +32,7 @@
   html, body, #root {
     height: 100%;
     overflow: hidden;
-    font-family: "Crimson Text", serif;
+    font-family: "Cinzel Decorative", "Cinzel", "Marcellus SC", "Marcellus", serif;
     background-color: #140e0a;
     background-image: 
       radial-gradient(circle at 50% 50%, rgba(36, 26, 18, 0.4) 0%, rgba(12, 8, 5, 0.95) 100%),
@@ -47,21 +48,26 @@
   ::-webkit-scrollbar-thumb      { background: #61442a; border-radius: 3px; border: 1px solid #8c643b; }
   ::-webkit-scrollbar-thumb:hover { background: #8c643b; }
 
-  * { box-sizing: border-box; }
+  * {
+    box-sizing: border-box;
+    font-family: "Cinzel Decorative", "Cinzel", "Marcellus SC", "Marcellus", serif;
+  }
 }
 
 @layer utilities {
-  .font-cinzel    { font-family: "Cinzel", serif; }
-  .font-crimson   { font-family: "Crimson Text", serif; }
-  .text-gold      { color: #c49339; }
-  .text-gold-dim  { color: #8c6421; }
+  .font-assassin    { font-family: "Cinzel Decorative", "Cinzel", "Marcellus SC", serif; }
+  .font-script      { font-family: "Marcellus", "Cinzel", serif; }
+  .font-cinzel      { font-family: "Cinzel Decorative", "Cinzel", "Marcellus SC", serif; }
+  .font-crimson     { font-family: "Marcellus", "Crimson Pro", "Cinzel", serif; }
+  .text-gold        { color: #c49339; }
+  .text-gold-dim    { color: #8c6421; }
   .text-gold-bright { color: #f0c050; }
-  .border-rpg     { border-color: #593e28; }
-  .border-rpg-2   { border-color: #8c643b; }
-  .bg-rpg-panel   { background-color: #1c1611; }
-  .bg-rpg-panel-2 { background-color: #251d16; }
-  .bg-rpg-bg      { background-color: #140e0a; }
-  .text-rpg-muted { color: #8c765c; }
+  .border-rpg       { border-color: #593e28; }
+  .border-rpg-2     { border-color: #8c643b; }
+  .bg-rpg-panel     { background-color: #1c1611; }
+  .bg-rpg-panel-2   { background-color: #251d16; }
+  .bg-rpg-bg        { background-color: #140e0a; }
+  .text-rpg-muted   { color: #8c765c; }
 
   /* Parchment Card Utility */
   .parchment-card {
