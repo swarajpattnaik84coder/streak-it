@@ -33,15 +33,18 @@ export default function MapBackground() {
         </filter>
       </defs>
 
-      {/* ── 1. PHOTOREALISTIC OLD DUSTY CARTOGRAPHY MAP IMAGE ───────────────── */}
-      <image
-        href="/assets/old_dusty_world_map.jpg"
-        x="0"
-        y="0"
-        width={W}
-        height={H}
-        preserveAspectRatio="none"
-      />
+      {/* ── 1. PHOTOREALISTIC OLD DUSTY CARTOGRAPHY MAP TILES (Uncompressed 16:9 Aspect Ratio) ──── */}
+      {[0, 1200, 2400].map((xOffset) => (
+        <image
+          key={xOffset}
+          href="/assets/old_dusty_world_map.jpg"
+          x={xOffset}
+          y="0"
+          width="1200"
+          height={H}
+          preserveAspectRatio="xMidYMid slice"
+        />
+      ))}
 
       {/* ── 2. AGED TEA STAIN & WARM PARCHMENT OVERLAYS ─────────────────────── */}
       <rect width={W} height={H} fill="url(#teaStain1)" style={{ mixBlendMode: "multiply" }} />
