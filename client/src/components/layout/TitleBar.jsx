@@ -1,9 +1,11 @@
 import { motion } from "framer-motion";
 import XpBar from "../ui/XpBar.jsx";
-import { PLAYER } from "../../data/mockData.js";
 import { FlameIcon, SettingsIcon } from "../ui/icons.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 
-export default function TitleBar({ onToggleCharPanel }) {
+export default function TitleBar({ onToggleCharPanel, onOpenAuth }) {
+  const { user, isAuthenticated, logout } = useAuth();
+
   return (
     <header
       className="flex items-center gap-4 px-4 h-12 shrink-0 z-20 select-none"
@@ -22,7 +24,7 @@ export default function TitleBar({ onToggleCharPanel }) {
 
       {/* ── XP Bar — center fill ─────────────────────────────────────────── */}
       <div className="flex-1 min-w-0">
-        <XpBar current={PLAYER.xp} max={PLAYER.xpToNext} level={PLAYER.level} />
+        <XpBar current={user.xp || 0} max={user.xpToNext || 1000} level={user.level || 1} />
       </div>
 
       {/* ── Right Stats ──────────────────────────────────────────────────── */}
@@ -35,7 +37,7 @@ export default function TitleBar({ onToggleCharPanel }) {
           transition={{ delay: 0.4 }}
         >
           <FlameIcon size={14} stroke="#f97316" />
-          <span className="text-orange-400 text-xs font-bold tabular-nums">{PLAYER.streak}</span>
+          <span className="text-orange-400 text-xs font-bold tabular-nums">{user.streak || 0}</span>
           <span className="text-rpg-muted text-[10px] hidden md:inline">day streak</span>
         </motion.div>
 
@@ -50,11 +52,29 @@ export default function TitleBar({ onToggleCharPanel }) {
           transition={{ delay: 0.5 }}
         >
           <span className="text-gold font-cinzel text-xs">◆</span>
-          <span className="text-gold tabular-nums font-semibold">{PLAYER.currency}</span>
+          <span className="text-gold tabular-nums font-semibold">{user.currency || 0}</span>
         </motion.div>
 
         {/* Separator */}
         <span className="hidden sm:block w-px h-4 bg-rpg-border" />
+
+        {/* Auth Button */}
+        {isAuthenticated ? (
+          <button
+            onClick={logout}
+            title="Log out"
+            className="text-[10px] font-cinzel text-stone-400 hover:text-red-400 transition-colors uppercase border border-[#26223e] px-2 py-0.5 rounded"
+          >
+            Logout
+          </button>
+        ) : (
+          <button
+            onClick={onOpenAuth}
+            className="text-[10px] font-cinzel font-bold text-amber-400 hover:text-amber-300 transition-colors uppercase border border-amber-500/50 px-2 py-0.5 rounded bg-amber-950/40"
+          >
+            Login / Join
+          </button>
+        )}
 
         {/* Avatar toggle */}
         <button
@@ -67,7 +87,7 @@ export default function TitleBar({ onToggleCharPanel }) {
             focus-visible:ring-1 focus-visible:ring-amber-500/50"
           style={{ background: "#1c1608", border: "1.5px solid #3a2e12" }}
         >
-          {PLAYER.name.charAt(0)}
+          {(user.name || "A").charAt(0)}
         </button>
 
         {/* Settings */}

@@ -2,7 +2,8 @@ import { motion } from "framer-motion";
 import {
   CalendarIcon, TrophyIcon, UserIcon, VaultIcon, StoreIcon,
 } from "../ui/icons.jsx";
-import { NAV_ITEMS, PLAYER } from "../../data/mockData.js";
+import { NAV_ITEMS } from "../../data/mockData.js";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 const ICONS = {
   calendar:    CalendarIcon,
@@ -13,6 +14,8 @@ const ICONS = {
 };
 
 export default function Sidebar({ activeId, onSelect }) {
+  const { user } = useAuth();
+
   return (
     <>
       {/* ── Desktop sidebar ─────────────────────────────────────────────── */}
@@ -91,11 +94,11 @@ export default function Sidebar({ activeId, onSelect }) {
           <div className="flex items-center gap-2.5 px-2.5 py-2 rounded">
             <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 font-cinzel text-[9px] font-bold text-gold"
               style={{ background: "#1c1608", border: "1px solid #3a2e12" }}>
-              {PLAYER.name.charAt(0)}
+              {(user.name || "A").charAt(0)}
             </div>
             <div className="hidden lg:block min-w-0">
-              <p className="text-[10px] font-semibold text-stone-300 truncate font-cinzel">{PLAYER.name}</p>
-              <p className="text-[9px] text-rpg-muted truncate">{PLAYER.class}</p>
+              <p className="text-[10px] font-semibold text-stone-300 truncate font-cinzel">{user.name}</p>
+              <p className="text-[9px] text-rpg-muted truncate">{user.equippedTitle || user.class}</p>
             </div>
           </div>
         </div>
