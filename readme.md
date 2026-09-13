@@ -1,5 +1,24 @@
 # streak it! - Life RPG Web Application
 
+## 🚀 Live Demo
+
+### Frontend
+[Open Streak It](https://streak-it-efyz-mgui7d33w-swarajpattnaik84-4794s-projects.vercel.app)
+
+The frontend is deployed on Vercel.
+
+### Backend API
+[Backend API](https://streak-it-backend.onrender.com)
+
+The backend is deployed on Render.
+
+### Architecture Overview
+- **Frontend** → Vercel
+- **Backend / API** → Render
+- **Database** → MongoDB Atlas
+
+---
+
 ## 1. Project Overview & The Core Problem
 Traditional productivity tools and habit trackers often feel like chores due to delayed gratification. **streak it!** solves this by translating mundane real-world tasks into an engaging virtual progression system. By utilizing instant feedback loops, clear progression mechanics, and tangible rewards, this application bridges the gap between daily discipline and the immediate dopamine of video games.
 
