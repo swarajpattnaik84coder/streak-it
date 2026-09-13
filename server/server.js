@@ -16,21 +16,30 @@ dotenv.config();
 
 const app = express();
 
-// CORS — allow the React dev server (and production origin) with credentials
+// CORS — allow frontend origins (Vercel, local dev, custom domain)
+const clientOrigin = process.env.CLIENT_ORIGIN;
 const allowedOrigins = [
-  process.env.CLIENT_ORIGIN || "http://localhost:5173",
+  clientOrigin,
+  "http://localhost:5173",
+  "http://localhost:5174",
   "http://localhost:3000",
   "http://127.0.0.1:5173",
-];
+  "http://127.0.0.1:5174",
+].filter(Boolean);
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(null, true); // Permissive in dev mode
+      // Allow requests with no origin (e.g. mobile apps, curl, health checks)
+      if (!origin) return callback(null, true);
+      if (
+        allowedOrigins.includes(origin) ||
+        origin.endsWith(".vercel.app") ||
+        process.env.NODE_ENV !== "production"
+      ) {
+        return callback(null, true);
       }
+      return callback(null, true);
     },
     credentials: true,
   })
