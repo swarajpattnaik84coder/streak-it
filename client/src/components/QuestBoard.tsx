@@ -18,8 +18,10 @@ const INITIAL_WRITS: WritTask[] = [
     category: "ROUTINE",
     attribute: "VIT",
     xp: 100,
+    baseXp: 100,
     gold: 15,
     status: "pending",
+    isFavorite: false,
     isImportant: false,
   },
   {
@@ -29,8 +31,10 @@ const INITIAL_WRITS: WritTask[] = [
     category: "ROUTINE",
     attribute: "Routine",
     xp: 100,
+    baseXp: 100,
     gold: 15,
     status: "pending",
+    isFavorite: false,
     isImportant: false,
   },
   {
@@ -40,8 +44,10 @@ const INITIAL_WRITS: WritTask[] = [
     category: "ROUTINE",
     attribute: "Routine",
     xp: 100,
+    baseXp: 100,
     gold: 15,
     status: "pending",
+    isFavorite: false,
     isImportant: false,
   },
   {
@@ -51,8 +57,10 @@ const INITIAL_WRITS: WritTask[] = [
     category: "ROUTINE",
     attribute: "VIT",
     xp: 100,
+    baseXp: 100,
     gold: 15,
     status: "pending",
+    isFavorite: false,
     isImportant: false,
   },
   {
@@ -62,8 +70,10 @@ const INITIAL_WRITS: WritTask[] = [
     category: "CORE",
     attribute: "STR",
     xp: 250,
+    baseXp: 250,
     gold: 40,
     status: "pending",
+    isFavorite: true,
     isImportant: true,
   },
   {
@@ -73,8 +83,10 @@ const INITIAL_WRITS: WritTask[] = [
     category: "CORE",
     attribute: "STR",
     xp: 250,
+    baseXp: 250,
     gold: 40,
     status: "pending",
+    isFavorite: false,
     isImportant: false,
   },
   {
@@ -84,8 +96,10 @@ const INITIAL_WRITS: WritTask[] = [
     category: "CORE",
     attribute: "INT",
     xp: 250,
+    baseXp: 250,
     gold: 40,
     status: "pending",
+    isFavorite: false,
     isImportant: false,
   },
   {
@@ -95,8 +109,10 @@ const INITIAL_WRITS: WritTask[] = [
     category: "CORE",
     attribute: "INT",
     xp: 250,
+    baseXp: 250,
     gold: 40,
     status: "pending",
+    isFavorite: false,
     isImportant: false,
   },
 ];
@@ -107,7 +123,17 @@ function loadInitialWrits(): WritTask[] {
     if (saved) {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
+        return parsed.map((item: any) => {
+          const isFav = Boolean(item.isFavorite ?? item.isImportant);
+          const baseXp = item.baseXp ?? item.xp;
+          return {
+            ...item,
+            baseXp,
+            xp: baseXp,
+            isFavorite: isFav,
+            isImportant: isFav,
+          };
+        });
       }
     }
   } catch (err) {
@@ -131,15 +157,19 @@ export default function QuestBoard() {
     }
   }, [writs]);
 
-  // Fulfill Task
+  // Fulfill Task with Favorite XP Boost
   const handleFulfill = useCallback(
     (task: WritTask) => {
       if (task.status === "fulfilled") return;
 
+      const isFav = Boolean(task.isFavorite ?? task.isImportant);
+      const baseXp = task.baseXp ?? task.xp;
+      const effectiveBaseReward = baseXp + (isFav ? 50 : 0);
+
       const award = completeTask({
         taskId: task.id,
         taskDifficulty: task.category,
-        claimedBaseReward: task.xp,
+        claimedBaseReward: effectiveBaseReward,
       });
 
       const attr = (task.attribute || "Routine") as keyof ProgressionAttributes;
@@ -152,10 +182,19 @@ export default function QuestBoard() {
     [completeTask, awardXp]
   );
 
-  // Toggle Important (Priority)
-  const handleToggleImportant = useCallback((id: string) => {
+  // Toggle Favorite
+  const handleToggleFavorite = useCallback((id: string) => {
     setWrits((prev) =>
-      prev.map((w) => (w.id === id ? { ...w, isImportant: !w.isImportant } : w))
+      prev.map((w) => {
+        if (w.id !== id) return w;
+        const currentFav = Boolean(w.isFavorite ?? w.isImportant);
+        const nextFav = !currentFav;
+        return {
+          ...w,
+          isFavorite: nextFav,
+          isImportant: nextFav,
+        };
+      })
     );
   }, []);
 
@@ -211,7 +250,7 @@ export default function QuestBoard() {
             count={countForDifficulty(task.category)}
             onFulfill={handleFulfill}
             onDelete={handleDeleteWrit}
-            onToggleImportant={handleToggleImportant}
+            onToggleFavorite={handleToggleFavorite}
           />
         ))}
 

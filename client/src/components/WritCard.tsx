@@ -11,7 +11,7 @@ interface WritCardProps {
   count: number;
   onFulfill: (task: WritTask) => void;
   onDelete: (id: string) => void;
-  onToggleImportant: (id: string) => void;
+  onToggleFavorite: (id: string) => void;
 }
 
 export default function WritCard({
@@ -20,11 +20,15 @@ export default function WritCard({
   count,
   onFulfill,
   onDelete,
-  onToggleImportant,
+  onToggleFavorite,
 }: WritCardProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const isFulfilled = task.status === "fulfilled";
+
+  const isFavorite = Boolean(task.isFavorite ?? task.isImportant);
+  const baseXp = task.baseXp ?? task.xp;
+  const displayXp = baseXp + (isFavorite ? 50 : 0);
 
   // Auto-close menu when clicking outside
   useEffect(() => {
@@ -45,17 +49,17 @@ export default function WritCard({
       transition={{ delay: index * 0.03 }}
       className={[
         "relative shrink-0 w-[240px] min-w-[240px] rounded px-3 py-2.5 flex flex-col justify-between transition-all duration-200",
-        task.isImportant
+        isFavorite
           ? "border-2 border-amber-400 shadow-[0_0_16px_rgba(245,158,11,0.35)] ring-1 ring-amber-400/40"
           : "border border-[#6b4e24] shadow-[inset_0_0_12px_rgba(80,50,10,0.12),0_2px_8px_rgba(0,0,0,0.35)]",
       ].join(" ")}
       style={{
-        background: task.isImportant
+        background: isFavorite
           ? "linear-gradient(180deg, #f0e2c6 0%, #d4b480 100%)"
           : "linear-gradient(180deg, #e8d7b5 0%, #c8a876 100%)",
       }}
     >
-      {/* Card Header: Category, Priority Badge, 3-dots */}
+      {/* Card Header: Category, Attribute, Favorite Badge, 3-dots */}
       <div>
         <div className="flex items-center justify-between gap-1 mb-1">
           <div className="flex items-center gap-1.5 flex-wrap">
@@ -72,10 +76,10 @@ export default function WritCard({
               </span>
             )}
 
-            {task.isImportant && (
-              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded text-[7.5px] font-cinzel font-black uppercase bg-amber-500/25 border border-amber-600/50 text-[#543007] shadow-xs">
+            {isFavorite && (
+              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[7.5px] font-cinzel font-black uppercase bg-amber-500/25 border border-amber-600/50 text-[#543007] shadow-xs">
                 <Star size={9} className="text-amber-600 fill-amber-500" />
-                PRIORITY
+                FAVORITE
               </span>
             )}
           </div>
@@ -106,16 +110,16 @@ export default function WritCard({
                 <button
                   type="button"
                   onClick={() => {
-                    onToggleImportant(task.id);
+                    onToggleFavorite(task.id);
                     setIsMenuOpen(false);
                   }}
-                  className="w-full text-left px-2 py-1.5 rounded text-[10px] font-bold text-amber-200 hover:text-amber-100 hover:bg-[#382618] transition-colors flex items-center gap-2"
+                  className="w-full text-left px-2.5 py-1.5 rounded text-[10px] font-bold text-amber-200 hover:text-amber-100 hover:bg-[#382618] transition-colors flex items-center gap-2"
                 >
                   <Star
                     size={11}
-                    className={task.isImportant ? "text-amber-400 fill-amber-400" : "text-amber-300"}
+                    className={isFavorite ? "text-amber-400 fill-amber-400" : "text-amber-300"}
                   />
-                  {task.isImportant ? "Unmark Important" : "Mark as Most Important"}
+                  {isFavorite ? "Remove Favorite" : "Mark as Favorite"}
                 </button>
                 <div className="my-0.5 border-t border-[#3d2a1c]" />
                 <button
@@ -124,7 +128,7 @@ export default function WritCard({
                     onDelete(task.id);
                     setIsMenuOpen(false);
                   }}
-                  className="w-full text-left px-2 py-1.5 rounded text-[10px] font-bold text-red-400 hover:text-red-300 hover:bg-red-950/40 transition-colors flex items-center gap-2"
+                  className="w-full text-left px-2.5 py-1.5 rounded text-[10px] font-bold text-red-400 hover:text-red-300 hover:bg-red-950/40 transition-colors flex items-center gap-2"
                 >
                   <Trash2 size={11} />
                   Delete Task
@@ -145,12 +149,19 @@ export default function WritCard({
 
       {/* Footer: Reward Pill and Fulfill Button */}
       <div className="flex flex-col items-stretch gap-1.5 mt-2">
-        <div className="flex items-center justify-between gap-1">
-          <TaskRewardPill
-            completionCountToday={count}
-            taskDifficulty={task.category as TaskDifficulty}
-            baseReward={task.xp}
-          />
+        <div className="flex items-center justify-between gap-1 flex-wrap">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <TaskRewardPill
+              completionCountToday={count}
+              taskDifficulty={task.category as TaskDifficulty}
+              baseReward={displayXp}
+            />
+            {isFavorite && (
+              <span className="inline-flex items-center gap-0.5 text-[7px] font-cinzel font-black px-1.5 py-0.5 rounded bg-gradient-to-r from-amber-500/30 to-yellow-500/20 text-[#543007] border border-amber-600/40 drop-shadow-[0_0_4px_rgba(245,158,11,0.5)] uppercase tracking-wider">
+                +50 XP BONUS
+              </span>
+            )}
+          </div>
           <span className="text-[8px] tabular-nums text-stone-600 font-cinzel shrink-0">
             {count} today
           </span>

@@ -6,8 +6,10 @@ export interface WritTask {
   description: string;
   category: TaskDifficulty; // 'ROUTINE' | 'CORE'
   attribute: string; // 'STR' | 'INT' | 'VIT' | 'Routine'
-  xp: number;
+  xp: number; // base XP (e.g. 100 or 250)
+  baseXp?: number; // base XP without favorite bonus
   gold: number;
   status: "pending" | "fulfilled";
-  isImportant: boolean;
+  isImportant?: boolean;
+  isFavorite?: boolean;
 }

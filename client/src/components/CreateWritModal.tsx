@@ -27,10 +27,11 @@ export default function CreateWritModal({
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState<TaskDifficulty>("CORE");
   const [attribute, setAttribute] = useState("STR");
-  const [isImportant, setIsImportant] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
-  // Sync rewards to category
-  const xpReward = category === "CORE" ? 250 : 100;
+  // Base rewards & Favorite bonus
+  const baseXp = category === "CORE" ? 250 : 100;
+  const totalXp = baseXp + (isFavorite ? 50 : 0);
   const goldReward = category === "CORE" ? 40 : 15;
 
   // Reset form when modal opens
@@ -40,7 +41,7 @@ export default function CreateWritModal({
       setDescription("");
       setCategory("CORE");
       setAttribute("STR");
-      setIsImportant(false);
+      setIsFavorite(false);
     }
   }, [isOpen]);
 
@@ -63,9 +64,11 @@ export default function CreateWritModal({
       description: description.trim(),
       category,
       attribute,
-      xp: xpReward,
+      xp: totalXp,
+      baseXp,
       gold: goldReward,
-      isImportant,
+      isFavorite,
+      isImportant: isFavorite,
     });
     onClose();
   };
@@ -214,22 +217,24 @@ export default function CreateWritModal({
                 Rewards Upon Fulfillment:
               </span>
               <div className="flex items-center gap-3">
-                <span className="text-[#8c4b18] font-black">+{xpReward} XP</span>
+                <span className="text-[#8c4b18] font-black">
+                  +{totalXp} XP {isFavorite && <span className="text-[9px] text-[#543007]">(+50 Bonus)</span>}
+                </span>
                 <span className="text-[#6d4c2b] font-black">+{goldReward} Gold</span>
                 <span className="text-[#3b2413] text-[10px]">+{attribute}</span>
               </div>
             </div>
 
-            {/* Priority Checkbox */}
+            {/* Favorite Checkbox */}
             <label className="flex items-center gap-2 cursor-pointer mt-0.5 select-none">
               <input
                 type="checkbox"
-                checked={isImportant}
-                onChange={(e) => setIsImportant(e.target.checked)}
+                checked={isFavorite}
+                onChange={(e) => setIsFavorite(e.target.checked)}
                 className="w-4 h-4 rounded border-2 border-[#7a552b] accent-[#8c4b18]"
               />
               <span className="text-[11px] font-bold text-[#3b2413]">
-                Mark as Most Important (Priority ⭐)
+                Mark as Favorite (+50 XP Bonus ⭐)
               </span>
             </label>
 
