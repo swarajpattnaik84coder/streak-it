@@ -1,7 +1,6 @@
 /**
- * Renders a bezier curve segment of the progression path between two level nodes.
- * Completed: multi-layer illuminated ancient road.
- * Locked:    dark dotted trail hint.
+ * Renders a bezier curve progression path between level nodes on the old map.
+ * Completed & active: warm glowing golden compass ribbon thread.
  */
 export default function ProgressionPath({ from, to, completed = false }) {
   const mx = (from.x + to.x) / 2;
@@ -11,28 +10,28 @@ export default function ProgressionPath({ from, to, completed = false }) {
   if (completed) {
     return (
       <g>
-        {/* Wide dark road bed */}
-        <path d={d} fill="none" stroke="#1a1408" strokeWidth="8" strokeLinecap="round" />
-        {/* Earthy center track */}
-        <path d={d} fill="none" stroke="#3a2c10" strokeWidth="4.5" strokeLinecap="round" />
-        {/* Gold illumination surface */}
-        <path d={d} fill="none" stroke="#a07828" strokeWidth="2.5" strokeLinecap="round" />
-        {/* Bright highlight thread */}
-        <path d={d} fill="none" stroke="#d4a040" strokeWidth="1" strokeLinecap="round" opacity="0.85" />
-        {/* Subtle glow aura */}
-        <path d={d} fill="none" stroke="#c9a84c" strokeWidth="6" strokeLinecap="round"
-          strokeOpacity="0.08" filter="url(#pathGlow)" />
+        {/* Dark road bed underlay */}
+        <path d={d} fill="none" stroke="#2b1a0c" strokeWidth="9" strokeLinecap="round" opacity="0.8" />
+        {/* Burnt umber leather edge */}
+        <path d={d} fill="none" stroke="#5c3c1b" strokeWidth="5.5" strokeLinecap="round" />
+        {/* Bright gold ribbon surface */}
+        <path d={d} fill="none" stroke="#f0c050" strokeWidth="3" strokeLinecap="round" />
+        {/* Core white-gold highlight thread */}
+        <path d={d} fill="none" stroke="#fff8d6" strokeWidth="1.2" strokeLinecap="round" />
+        {/* Gold glow aura */}
+        <path d={d} fill="none" stroke="#f0c050" strokeWidth="10" strokeLinecap="round"
+          strokeOpacity="0.25" filter="url(#goldGlow)" />
       </g>
     );
   }
 
   return (
     <g>
-      {/* Dark underlying track */}
-      <path d={d} fill="none" stroke="#100e1c" strokeWidth="4" strokeLinecap="round" />
-      {/* Faint dotted hint */}
-      <path d={d} fill="none" stroke="#2e2a48" strokeWidth="1.5" strokeLinecap="round"
-        strokeDasharray="5 6" strokeOpacity="0.6" />
+      {/* Dark underlying trail */}
+      <path d={d} fill="none" stroke="#2b1a0c" strokeWidth="5" strokeLinecap="round" opacity="0.6" />
+      {/* Dotted gold trail hint */}
+      <path d={d} fill="none" stroke="#c49339" strokeWidth="2" strokeLinecap="round"
+        strokeDasharray="6 6" strokeOpacity="0.75" />
     </g>
   );
 }

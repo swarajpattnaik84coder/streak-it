@@ -5,42 +5,47 @@
   --font-cinzel:        "Cinzel", serif;
   --font-crimson:       "Crimson Text", serif;
 
-  /* Core brand colors */
-  --color-rpg-gold:     #c9a84c;
-  --color-rpg-gold-dim: #8a6c24;
-  --color-rpg-gold-bright: #f0c060;
-  --color-rpg-panel:    #0b0b14;
-  --color-rpg-panel-2:  #0e0d1a;
-  --color-rpg-border:   #1f1d30;
-  --color-rpg-border-2: #2a2740;
-  --color-rpg-bg:       #070710;
-  --color-rpg-text:     #ddd8cc;
-  --color-rpg-muted:    #514e68;
-  --color-rpg-accent:   #4a3820;
+  /* Old Dusty Parchment & Antique Wood Palette */
+  --color-rpg-gold:     #c49339;
+  --color-rpg-gold-dim: #8c6421;
+  --color-rpg-gold-bright: #f0c050;
+
+  /* Wood & Parchment Theme */
+  --color-rpg-panel:    #1c1611;
+  --color-rpg-panel-2:  #251d16;
+  --color-rpg-border:   #593e28;
+  --color-rpg-border-2: #8c643b;
+  --color-rpg-bg:       #140e0a;
+  --color-rpg-text:     #2b1d0e;
+  --color-rpg-muted:    #7a634b;
+  --color-rpg-accent:   #8c5828;
 
   /* Map palette */
-  --color-map-land:     #13100f;
-  --color-map-water:    #07090f;
-  --color-map-mountain: #1a1628;
-  --color-map-forest:   #0b1410;
+  --color-map-land:     #dcc79b;
+  --color-map-water:    #769796;
+  --color-map-mountain: #735332;
+  --color-map-forest:   #4a6344;
 }
 
 @layer base {
   html, body, #root {
     height: 100%;
     overflow: hidden;
-    font-family: system-ui, sans-serif;
-    background-color: #070710;
-    color: #ddd8cc;
+    font-family: "Crimson Text", serif;
+    background-color: #140e0a;
+    background-image: 
+      radial-gradient(circle at 50% 50%, rgba(36, 26, 18, 0.4) 0%, rgba(12, 8, 5, 0.95) 100%),
+      repeating-linear-gradient(90deg, rgba(20, 14, 10, 0.3) 0px, rgba(20, 14, 10, 0.3) 40px, rgba(30, 20, 14, 0.3) 40px, rgba(30, 20, 14, 0.3) 80px);
+    color: #f0e6d2;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Thin custom scrollbar */
-  ::-webkit-scrollbar            { width: 3px; height: 3px; }
-  ::-webkit-scrollbar-track      { background: transparent; }
-  ::-webkit-scrollbar-thumb      { background: #2a2740; border-radius: 2px; }
-  ::-webkit-scrollbar-thumb:hover { background: #3e3a5e; }
+  /* Custom scrollbar */
+  ::-webkit-scrollbar            { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track      { background: #1a120b; }
+  ::-webkit-scrollbar-thumb      { background: #61442a; border-radius: 3px; border: 1px solid #8c643b; }
+  ::-webkit-scrollbar-thumb:hover { background: #8c643b; }
 
   * { box-sizing: border-box; }
 }
@@ -48,23 +53,31 @@
 @layer utilities {
   .font-cinzel    { font-family: "Cinzel", serif; }
   .font-crimson   { font-family: "Crimson Text", serif; }
-  .text-gold      { color: #c9a84c; }
-  .text-gold-dim  { color: #8a6c24; }
-  .text-gold-bright { color: #f0c060; }
-  .border-rpg     { border-color: #1f1d30; }
-  .border-rpg-2   { border-color: #2a2740; }
-  .bg-rpg-panel   { background-color: #0b0b14; }
-  .bg-rpg-panel-2 { background-color: #0e0d1a; }
-  .bg-rpg-bg      { background-color: #070710; }
-  .text-rpg-muted { color: #514e68; }
+  .text-gold      { color: #c49339; }
+  .text-gold-dim  { color: #8c6421; }
+  .text-gold-bright { color: #f0c050; }
+  .border-rpg     { border-color: #593e28; }
+  .border-rpg-2   { border-color: #8c643b; }
+  .bg-rpg-panel   { background-color: #1c1611; }
+  .bg-rpg-panel-2 { background-color: #251d16; }
+  .bg-rpg-bg      { background-color: #140e0a; }
+  .text-rpg-muted { color: #8c765c; }
+
+  /* Parchment Card Utility */
+  .parchment-card {
+    background: #e8d7b5;
+    background-image: 
+      radial-gradient(circle at 50% 50%, rgba(255,255,255,0.2) 0%, rgba(184, 150, 105, 0.35) 100%),
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.015) 0px, rgba(0,0,0,0.015) 2px, transparent 2px, transparent 4px);
+    border: 2px solid #593e28;
+    box-shadow: inset 0 0 15px rgba(89, 62, 40, 0.4), 0 6px 18px rgba(0,0,0,0.6);
+    color: #2b1d0e;
+  }
 
   /* Gold shadows */
-  .shadow-gold    { box-shadow: 0 0 18px 0 rgba(201,168,76,0.12), 0 0 4px 0 rgba(201,168,76,0.06); }
-  .shadow-gold-sm { box-shadow: 0 0 8px 0 rgba(201,168,76,0.18); }
-  .shadow-gold-lg { box-shadow: 0 0 32px 0 rgba(201,168,76,0.15), 0 0 8px 0 rgba(201,168,76,0.08); }
-
-  /* Inset border glow */
-  .ring-gold-sm   { box-shadow: inset 0 0 0 1px rgba(201,168,76,0.2); }
+  .shadow-gold    { box-shadow: 0 0 18px 0 rgba(196,147,57,0.25); }
+  .shadow-gold-sm { box-shadow: 0 0 8px 0 rgba(196,147,57,0.3); }
+  .shadow-gold-lg { box-shadow: 0 0 32px 0 rgba(196,147,57,0.35); }
 
   /* No scrollbar utility */
   .no-scrollbar   { scrollbar-width: none; }
@@ -72,10 +85,9 @@
 
   /* Fantasy separator */
   .divider-fantasy {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(201,168,76,0.2) 30%, rgba(201,168,76,0.2) 70%, transparent);
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #8c643b 30%, #8c643b 70%, transparent);
   }
 
-  /* Subtle text glow */
-  .text-glow-gold { text-shadow: 0 0 16px rgba(201,168,76,0.5), 0 0 4px rgba(201,168,76,0.3); }
+  .text-glow-gold { text-shadow: 0 0 12px rgba(196,147,57,0.6); }
 }
