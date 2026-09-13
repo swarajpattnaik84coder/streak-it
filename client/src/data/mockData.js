@@ -1,12 +1,12 @@
 // ── Player ────────────────────────────────────────────────────────────────────
-export const CURRENT_LEVEL = 7;
+export const CURRENT_LEVEL = 9;
 
 export const PLAYER = {
   name: "Aeldric",
   class: "Shadow Warden",
-  level: 7,
-  xp: 1340,
-  xpToNext: 1500,
+  level: 9,
+  xp: 99999,
+  xpToNext: 5395,
   currency: 840,
   streak: 14,
   stats: [
@@ -18,7 +18,17 @@ export const PLAYER = {
   ],
 };
 
-// ── Navigation ────────────────────────────────────────────────────────────────
+export const QUESTS = [
+  { id: "water",   name: "Drink Water",  blurb: "A humble cup for the road.",           difficulty: "ROUTINE" },
+  { id: "bed",     name: "Make Bed",     blurb: "Order the chamber before dawn.",       difficulty: "ROUTINE" },
+  { id: "laundry", name: "Laundry",      blurb: "Wash the travel cloaks.",              difficulty: "ROUTINE" },
+  { id: "sleep",   name: "Sleep Well",   blurb: "Rest enough to hold the watch.",       difficulty: "ROUTINE" },
+  { id: "gym",     name: "Gym",          blurb: "Train body as one trains a blade.",    difficulty: "CORE" },
+  { id: "run",     name: "Running",      blurb: "The long road builds the lung.",       difficulty: "CORE" },
+  { id: "study",   name: "Deep Study",   blurb: "Master the scrolls, not the margins.", difficulty: "CORE" },
+  { id: "coding",  name: "Coding",       blurb: "Forge logic in quiet hours.",          difficulty: "CORE" },
+];
+
 export const NAV_ITEMS = [
   { id: "calendar",    label: "Calendar" },
   { id: "leaderboard", label: "Leaderboard" },

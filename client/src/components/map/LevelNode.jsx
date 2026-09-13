@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import { CURRENT_LEVEL } from "../../data/mockData.js";
 
 const R_NORMAL  = 16;
 const R_CURRENT = 22;
@@ -47,9 +46,9 @@ function Lock() {
   );
 }
 
-export default function LevelNode({ level, onClick }) {
-  const status = level.id < CURRENT_LEVEL  ? "completed"
-               : level.id === CURRENT_LEVEL ? "current"
+export default function LevelNode({ level, onClick, currentLevel }) {
+  const status = level.id < currentLevel  ? "completed"
+               : level.id === currentLevel ? "current"
                :                              "locked";
 
   const isCurrent   = status === "current";

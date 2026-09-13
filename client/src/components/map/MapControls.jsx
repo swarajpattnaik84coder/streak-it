@@ -1,5 +1,5 @@
 import { ChevronLeftIcon, ChevronRightIcon, ZapIcon } from "../ui/icons.jsx";
-import { SEGMENTS, CURRENT_LEVEL } from "../../data/mockData.js";
+import { SEGMENTS } from "../../data/mockData.js";
 
 export default function MapControls({
   currentSegmentId,
@@ -8,6 +8,7 @@ export default function MapControls({
   onPrevSegment,
   onNextSegment,
   onCenterOnCurrent,
+  currentLevel,
 }) {
   return (
     <div
@@ -36,7 +37,7 @@ export default function MapControls({
       <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
         {SEGMENTS.map((seg) => {
           const isActive = seg.id === currentSegmentId;
-          const hasCurrentLvl = CURRENT_LEVEL >= seg.levelRange[0] && CURRENT_LEVEL <= seg.levelRange[1];
+          const hasCurrentLvl = currentLevel >= seg.levelRange[0] && currentLevel <= seg.levelRange[1];
 
           return (
             <button

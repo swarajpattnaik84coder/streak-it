@@ -1,5 +1,8 @@
 import { AnimatePresence, motion } from "framer-motion";
 import Badge from "../ui/Badge.jsx";
+import TaskRewardPill from "../TaskRewardPill";
+import { BASE_XP } from "../../lib/antiSpamEngine";
+import { useAntiSpam } from "../../lib/AntiSpamContext";
 
 const TYPE_META = {
   combat:      { label: "Combat",      variant: "red"    },
@@ -15,6 +18,9 @@ const TYPE_META = {
  */
 export default function LevelTooltip({ level, x, y, onClose }) {
   const meta = TYPE_META[level?.type] ?? TYPE_META.task;
+  const difficulty = level?.type === "task" || level?.type === "exploration" ? "ROUTINE" : "CORE";
+  const { countForDifficulty } = useAntiSpam();
+  const completionCountToday = countForDifficulty(difficulty);
 
   return (
     <AnimatePresence>
@@ -30,9 +36,9 @@ export default function LevelTooltip({ level, x, y, onClose }) {
         >
           {/* Card positioned above the click point */}
           <div className="relative -translate-x-1/2 -translate-y-full -mt-3
-            pointer-events-auto cursor-default w-48
+            pointer-events-auto cursor-default w-56
             bg-stone-950 border border-rpg rounded-xl shadow-2xl
-            overflow-hidden"
+            overflow-visible"
           >
             {/* Top accent strip */}
             <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-amber-600/60 to-transparent" />
@@ -44,9 +50,13 @@ export default function LevelTooltip({ level, x, y, onClose }) {
               <p className="text-sm font-semibold text-stone-100 mb-2.5 leading-snug">
                 {level.name}
               </p>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-1.5">
                 <Badge variant={meta.variant} size="xs">{meta.label}</Badge>
-                <span className="text-[10px] text-amber-400 font-medium">+{level.xpReward} xp</span>
+                <TaskRewardPill
+                  completionCountToday={completionCountToday}
+                  taskDifficulty={difficulty}
+                  baseReward={BASE_XP[difficulty]}
+                />
               </div>
               <p className="mt-2 text-[9px] text-stone-600">
                 {level.tasks} task{level.tasks !== 1 ? "s" : ""} to complete

@@ -2,8 +2,10 @@ import { motion } from "framer-motion";
 import XpBar from "../ui/XpBar.jsx";
 import { PLAYER } from "../../data/mockData.js";
 import { FlameIcon, SettingsIcon } from "../ui/icons.jsx";
+import { useProgression } from "../../lib/ProgressionContext";
 
 export default function TitleBar({ onToggleCharPanel }) {
+  const { state, openSheet } = useProgression();
   return (
     <header
       className="flex items-center gap-4 px-4 h-12 shrink-0 z-20 select-none"
@@ -22,7 +24,14 @@ export default function TitleBar({ onToggleCharPanel }) {
 
       {/* ── XP Bar — center fill ─────────────────────────────────────────── */}
       <div className="flex-1 min-w-0">
-        <XpBar current={PLAYER.xp} max={PLAYER.xpToNext} level={PLAYER.level} />
+        <XpBar
+          current={state.xp}
+          max={state.xpToNext}
+          level={state.level}
+          isGateLocked={state.isGateLocked}
+          nextLevel={state.nextLevel}
+          onLockedActivate={openSheet}
+        />
       </div>
 
       {/* ── Right Stats ──────────────────────────────────────────────────── */}
@@ -50,7 +59,7 @@ export default function TitleBar({ onToggleCharPanel }) {
           transition={{ delay: 0.5 }}
         >
           <span className="text-gold font-cinzel text-xs">◆</span>
-          <span className="text-gold tabular-nums font-semibold">{PLAYER.currency}</span>
+          <span className="text-gold tabular-nums font-semibold">{state.gold}</span>
         </motion.div>
 
         {/* Separator */}

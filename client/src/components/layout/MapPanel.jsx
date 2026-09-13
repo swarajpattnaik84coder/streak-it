@@ -1,15 +1,20 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import WorldMap from "../map/WorldMap.jsx";
 import MapControls from "../map/MapControls.jsx";
-import { SEGMENTS, CURRENT_LEVEL, LEVELS } from "../../data/mockData.js";
+import { SEGMENTS, LEVELS } from "../../data/mockData.js";
+import QuestBoard from "../QuestBoard";
+import { useProgression } from '../../lib/ProgressionContext';
 
 /**
  * Center column panel housing the fantasy RPG world map and segment navigation.
  */
 export default function MapPanel() {
+  const { state } = useProgression();
+  const currentLevel = state.level;
+
   // Identify segment containing current level initially
   const initialSeg = SEGMENTS.find(
-    (s) => CURRENT_LEVEL >= s.levelRange[0] && CURRENT_LEVEL <= s.levelRange[1]
+    (s) => currentLevel >= s.levelRange[0] && currentLevel <= s.levelRange[1]
   ) || SEGMENTS[0];
 
   const [currentSegmentId, setCurrentSegmentId] = useState(initialSeg.id);
@@ -24,12 +29,22 @@ export default function MapPanel() {
 
   const handleCenterOnCurrent = useCallback(() => {
     const currSeg = SEGMENTS.find(
-      (s) => CURRENT_LEVEL >= s.levelRange[0] && CURRENT_LEVEL <= s.levelRange[1]
+      (s) => currentLevel >= s.levelRange[0] && currentLevel <= s.levelRange[1]
     );
     if (currSeg) {
       setCurrentSegmentId(currSeg.id);
     }
-  }, []);
+  }, [currentLevel]);
+
+  // Auto-switch to the segment containing the active level when it changes
+  useEffect(() => {
+    const seg = SEGMENTS.find(
+      (s) => currentLevel >= s.levelRange[0] && currentLevel <= s.levelRange[1]
+    );
+    if (seg) {
+      setCurrentSegmentId(seg.id);
+    }
+  }, [currentLevel]);
 
   return (
     <main className="flex flex-col flex-1 min-w-0 overflow-hidden bg-rpg-bg">
@@ -38,8 +53,11 @@ export default function MapPanel() {
         <WorldMap
           currentSegmentId={currentSegmentId}
           onSegmentChange={setCurrentSegmentId}
+          currentLevel={currentLevel}
         />
       </div>
+
+      <QuestBoard />
 
       {/* Map Segment Navigation Controls */}
       <MapControls
@@ -49,6 +67,7 @@ export default function MapPanel() {
         onPrevSegment={handlePrevSegment}
         onNextSegment={handleNextSegment}
         onCenterOnCurrent={handleCenterOnCurrent}
+        currentLevel={currentLevel}
       />
     </main>
   );

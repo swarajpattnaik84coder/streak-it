@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, animate } from "framer-motion";
-import { MAP_CONFIG, LEVELS, CURRENT_LEVEL, SEGMENTS } from "../../data/mockData.js";
+import { MAP_CONFIG, LEVELS, SEGMENTS } from "../../data/mockData.js";
 import MapBackground from "./MapBackground.jsx";
 import MapRegion from "./MapRegion.jsx";
 import MapSegment from "./MapSegment.jsx";
@@ -8,7 +8,7 @@ import ProgressionPath from "./ProgressionPath.jsx";
 import LevelNode from "./LevelNode.jsx";
 import LevelTooltip from "./LevelTooltip.jsx";
 
-export default function WorldMap({ currentSegmentId, onSegmentChange }) {
+export default function WorldMap({ currentSegmentId, onSegmentChange, currentLevel }) {
   const containerRef = useRef(null);
   const [tooltip, setTooltip] = useState(null);
   const [containerWidth, setContainerWidth] = useState(800);
@@ -50,11 +50,11 @@ export default function WorldMap({ currentSegmentId, onSegmentChange }) {
 
   // Initial center on current level on mount
   useEffect(() => {
-    const currLevel = LEVELS.find((l) => l.id === CURRENT_LEVEL);
+    const currLevel = LEVELS.find((l) => l.id === currentLevel);
     if (currLevel) {
       panToX(currLevel.x);
     }
-  }, [panToX]);
+  }, [panToX, currentLevel]);
 
   // Handle horizontal mouse wheel panning
   const handleWheel = (e) => {
@@ -148,7 +148,7 @@ export default function WorldMap({ currentSegmentId, onSegmentChange }) {
                 key={`path-${lvl.id}`}
                 from={lvl}
                 to={next}
-                completed={next.id <= CURRENT_LEVEL}
+                completed={next.id <= currentLevel}
               />
             );
           })}
@@ -159,6 +159,7 @@ export default function WorldMap({ currentSegmentId, onSegmentChange }) {
               key={lvl.id}
               level={lvl}
               onClick={handleNodeClick}
+              currentLevel={currentLevel}
             />
           ))}
         </svg>
