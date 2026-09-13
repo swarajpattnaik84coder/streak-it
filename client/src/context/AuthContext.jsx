@@ -16,7 +16,9 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(DEFAULT_PLAYER);
   const [tasks, setTasks] = useState(DEFAULT_TASKS);
   const [token, setToken] = useState(localStorage.getItem("streak_token") || null);
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  // Start unauthenticated — only set to true after login/register/demoLogin
+  // or after fetchUser successfully validates a stored token.
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(false);
   const [levelUpMessage, setLevelUpMessage] = useState(null);
 
@@ -40,7 +42,8 @@ export function AuthProvider({ children }) {
         setIsAuthenticated(true);
       }
     } catch (err) {
-      // Keep default local user state if offline
+      // Token invalid or server offline — stay on login page
+      setIsAuthenticated(false);
     }
   }, []);
 
@@ -68,29 +71,50 @@ export function AuthProvider({ children }) {
     setLoading(true);
     try {
       const res = await axiosInstance.post("/auth/login", { email, password });
+      const serverUser = res.data.user || {};
+      const normalisedUser = { ...serverUser, name: serverUser.name || serverUser.username || email };
       setToken(res.data.token);
-      setUser(res.data.user);
+      setUser(normalisedUser);
       setIsAuthenticated(true);
       setLoading(false);
       return { success: true };
     } catch (err) {
       setLoading(false);
-      return { success: false, message: err.response?.data?.message || "Login failed" };
+      // Server unreachable → local demo session so flow can be tested
+      if (!err.response) {
+        const derivedName = email.split("@")[0] || "Adventurer";
+        setUser({ ...DEFAULT_PLAYER, name: derivedName, username: derivedName });
+        setIsAuthenticated(true);
+        return { success: true, offline: true };
+      }
+      return { success: false, message: err.response?.data?.message || "Invalid credentials. Please try again." };
     }
   };
 
   const register = async (username, email, password) => {
     setLoading(true);
     try {
-      const res = await axiosInstance.post("/auth/register", { username, email, password });
+      // Send both username AND name so the backend display name is always set
+      const res = await axiosInstance.post("/auth/register", { username, email, password, name: username });
+      // Normalise: ensure user.name is always set (backend may return username instead)
+      const serverUser = res.data.user || {};
+      const normalisedUser = { ...serverUser, name: serverUser.name || serverUser.username || username };
       setToken(res.data.token);
-      setUser(res.data.user);
+      setUser(normalisedUser);
       setIsAuthenticated(true);
       setLoading(false);
       return { success: true };
     } catch (err) {
       setLoading(false);
-      return { success: false, message: err.response?.data?.message || "Registration failed" };
+      const serverMsg = err.response?.data?.message;
+      // If the server is simply unreachable (network error), offer a local session
+      if (!err.response) {
+        // Offline fallback — local demo session with the provided name
+        setUser({ ...DEFAULT_PLAYER, name: username, username });
+        setIsAuthenticated(true);
+        return { success: true, offline: true };
+      }
+      return { success: false, message: serverMsg || "Registration failed. Please try again." };
     }
   };
 
