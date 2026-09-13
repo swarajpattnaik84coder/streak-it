@@ -1,14 +1,15 @@
 // ── Player ────────────────────────────────────────────────────────────────────
-export const CURRENT_LEVEL = 9;
+export const CURRENT_LEVEL = 10;
 
 export const PLAYER = {
   name: "Aeldric",
   class: "Shadow Warden",
-  level: 9,
-  xp: 99999,
-  xpToNext: 5395,
+  level: 10,
+  xp: 450,
+  xpToNext: 2162,
   currency: 840,
   streak: 14,
+  unallocatedStatPoints: 3,
   stats: [
     { key: "STR", label: "Strength",  value: 68, max: 100, color: "#ef4444" },
     { key: "INT", label: "Intellect", value: 82, max: 100, color: "#3b82f6" },

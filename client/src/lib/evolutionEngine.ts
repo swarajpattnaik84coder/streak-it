@@ -39,6 +39,8 @@ export interface ProgressionState {
   xpToNext: number;
   xpPercent: number;
   gold: number;
+  unallocatedPoints: number;
+  spentPoints: number;
   isGateLocked: boolean;
   isMaxLevel: boolean;
   nextLevel: number | null;
@@ -175,15 +177,40 @@ export function buildProgressionState(input: {
   level: number;
   xp: number;
   gold?: number;
+  unallocatedPoints?: number;
+  spentPoints?: number;
   attributes: ProgressionAttributes;
   trialProgress?: Record<string, number>;
   name: string;
   characterClass: string;
 }): ProgressionState {
-  const level = Math.min(Math.max(Math.floor(input.level), 1), MAX_LEVEL);
+  let level = Math.min(Math.max(Math.floor(input.level), 1), MAX_LEVEL);
+  let xpToNext = xpToAdvanceFrom(level);
+  let xp = Math.max(0, Math.floor(input.xp));
+  const spentPoints = Math.max(0, input.spentPoints ?? 0);
+  let unallocatedPoints = Math.max(0, input.unallocatedPoints ?? Math.max(0, (level * 1) - spentPoints));
+
+  // Automatic level-up check:
+  // When xp >= xpToNext:
+  // If not a milestone gate: automatically trigger level up, rollover remaining XP, and award +1 unallocated attribute point.
+  if (!isGateLockLevel(level)) {
+    while (xp >= xpToNext && level < MAX_LEVEL && !isGateLockLevel(level)) {
+      xp -= xpToNext;
+      level += 1;
+      unallocatedPoints += 1;
+      xpToNext = xpToAdvanceFrom(level);
+
+      if (isGateLockLevel(level)) {
+        xp = Math.min(xp, xpToNext);
+        break;
+      }
+    }
+  }
+
   const isMaxLevel = level >= MAX_LEVEL;
-  const xpToNext = xpToAdvanceFrom(level);
-  const xp = isMaxLevel ? 0 : Math.min(Math.max(0, Math.floor(input.xp)), xpToNext);
+  if (isMaxLevel) {
+    xp = 0;
+  }
   const atCap = !isMaxLevel && xpToNext > 0 && xp >= xpToNext;
   const isGateLocked = isGateLockLevel(level) && atCap;
   const trial = isGateLocked
@@ -198,6 +225,8 @@ export function buildProgressionState(input: {
     xpToNext,
     xpPercent,
     gold: input.gold ?? 0,
+    unallocatedPoints,
+    spentPoints,
     isGateLocked,
     isMaxLevel,
     nextLevel: isMaxLevel ? null : level + 1,
@@ -228,6 +257,8 @@ export function completeTrialRequirement(
     level: state.level,
     xp: state.xp,
     gold: state.gold,
+    unallocatedPoints: state.unallocatedPoints,
+    spentPoints: state.spentPoints,
     attributes: state.attributes,
     trialProgress: progress,
     name: state.name,
@@ -245,6 +276,8 @@ export function ascend(state: ProgressionState): ProgressionState {
     level: nextLevel,
     xp: 0,
     gold: state.gold,
+    unallocatedPoints: (state.unallocatedPoints ?? 0) + 1,
+    spentPoints: state.spentPoints ?? 0,
     attributes: {
       STR: Math.min(100, state.attributes.STR + bump),
       INT: Math.min(100, state.attributes.INT + bump),
@@ -260,6 +293,8 @@ export function createInitialProgression(input: {
   level: number;
   xp?: number;
   gold?: number;
+  unallocatedPoints?: number;
+  spentPoints?: number;
   attributes: ProgressionAttributes;
   trialProgress?: Record<string, number>;
   name: string;
@@ -273,6 +308,8 @@ export function createInitialProgression(input: {
     level,
     xp,
     gold: input.gold ?? 0,
+    unallocatedPoints: input.unallocatedPoints,
+    spentPoints: input.spentPoints ?? 0,
   });
 }
 
@@ -300,6 +337,7 @@ export function applyXpToState(
   let xp = state.xp + earnedXp;
   let lvl = state.level;
   let xpToNext = state.xpToNext;
+  let unallocatedPoints = state.unallocatedPoints ?? 0;
 
   // If at a gate lock level and XP is at cap, don't level up — just cap
   if (isGateLockLevel(lvl) && xp >= xpToNext) {
@@ -309,6 +347,7 @@ export function applyXpToState(
     while (xp >= xpToNext && lvl < MAX_LEVEL) {
       xp -= xpToNext;
       lvl += 1;
+      unallocatedPoints += 1;
       xpToNext = xpToAdvanceFrom(lvl);
 
       // If we hit a gate lock level, cap and stop
@@ -327,6 +366,8 @@ export function applyXpToState(
     level: lvl,
     xp,
     gold: state.gold + goldReward,
+    unallocatedPoints,
+    spentPoints: state.spentPoints ?? 0,
     attributes: {
       ...state.attributes,
       [attribute]: Math.min(100, state.attributes[attribute] + 1),

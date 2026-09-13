@@ -1,11 +1,35 @@
 import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useProgression } from "../lib/ProgressionContext";
 import CharacterViewer from "../components/character/CharacterViewer.jsx";
 import StatBar from "../components/ui/StatBar.jsx";
 
 export default function CharacterPage() {
-  const { user, allocateStat } = useAuth();
-  const points = user.unallocatedStatPoints || 0;
+  const { user, allocateStat: authAllocateStat } = useAuth();
+  const { state, allocatePoint } = useProgression();
+
+  // Points calculation: (level * pointsPerLevel) - totalSpentPoints, guaranteed non-negative
+  const pointsPerLevel = 1;
+  const totalSpentPoints = state.spentPoints ?? 0;
+  const calculatedPoints = Math.max(0, (state.level * pointsPerLevel) - totalSpentPoints);
+  const points = Math.max(0, state.unallocatedPoints ?? calculatedPoints);
+
+  const handleAllocate = (statKey) => {
+    allocatePoint(statKey);
+    if (authAllocateStat) {
+      authAllocateStat(statKey);
+    }
+  };
+
+  // Combine progression attributes with auth user stats for full coverage
+  const statList = [
+    { key: "STR", label: "Strength", value: state.attributes.STR ?? 68, max: 100, color: "#ef4444" },
+    { key: "INT", label: "Intellect", value: state.attributes.INT ?? 82, max: 100, color: "#3b82f6" },
+    { key: "VIT", label: "Vitality", value: state.attributes.VIT ?? 71, max: 100, color: "#f97316" },
+    { key: "Routine", label: "Routine", value: state.attributes.Routine ?? 64, max: 100, color: "#c9a84c" },
+    { key: "AGI", label: "Agility", value: user.stats?.find((s) => s.key === "AGI")?.value ?? 59, max: 100, color: "#22c55e" },
+    { key: "FOC", label: "Focus", value: user.stats?.find((s) => s.key === "FOC")?.value ?? 74, max: 100, color: "#a855f7" },
+  ];
 
   return (
     <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[#140e0a] text-[#2b1d0e]">
@@ -24,7 +48,10 @@ export default function CharacterPage() {
 
           <div className="flex items-center gap-2">
             <span className="px-3 py-1 rounded-lg text-xs font-black bg-[#593e28] text-[#f5ebd6]">
-              Lv. {user.level} {user.class}
+              Lv. {state.level} {state.characterClass || user.class}
+            </span>
+            <span className="px-2.5 py-1 rounded-lg text-xs font-black bg-[#8c4b18] text-[#f5ebd6]">
+              T{state.tier.id} · {state.tier.name}
             </span>
           </div>
         </div>
@@ -50,10 +77,10 @@ export default function CharacterPage() {
             <div className="p-4 rounded-xl border-2 border-[#593e28] bg-[#e8d7b5] text-center flex flex-col gap-2">
               <p className="text-[10px] font-bold text-[#6e4e31] uppercase tracking-widest">Active Title & Badge</p>
               <h3 className="text-sm font-black text-[#8c4b18]">
-                {user.equippedTitle || "Shadow Warden"}
+                {state.tier.title}
               </h3>
               <p className="text-xs text-[#3b2413] font-crimson font-bold">
-                Equipped Crest: <span className="text-[#6d4c2b] font-black">🐉 {user.equippedBadge || "Dragon Crest"}</span>
+                Equipped Crest: <span className="text-[#6d4c2b] font-black">🛡️ T{state.tier.id} {state.tier.name}</span>
               </p>
             </div>
           </div>
@@ -64,16 +91,20 @@ export default function CharacterPage() {
             {/* XP & Level Summary */}
             <div className="p-4 rounded-xl border-2 border-[#593e28] bg-[#e8d7b5] flex flex-col gap-3">
               <div className="flex justify-between items-center text-xs">
-                <span className="text-[#3b2413] font-bold">XP Progress to Level {user.level + 1}</span>
+                <span className="text-[#3b2413] font-bold">
+                  {state.isGateLocked
+                    ? `Level ${state.nextLevel} Gate Sealed`
+                    : `XP Progress to Level ${state.nextLevel ?? state.level + 1}`}
+                </span>
                 <span className="text-[#8c4b18] font-black tabular-nums">
-                  {user.xp} / {user.xpToNext} XP
+                  {state.xp.toLocaleString()} / {state.xpToNext.toLocaleString()} XP
                 </span>
               </div>
               <div className="w-full h-3.5 rounded-full bg-[#cda574] overflow-hidden border border-[#593e28]">
                 <motion.div
                   className="h-full bg-[#8c4b18] rounded-full"
                   initial={{ width: 0 }}
-                  animate={{ width: `${Math.min((user.xp / user.xpToNext) * 100, 100)}%` }}
+                  animate={{ width: `${state.xpPercent}%` }}
                   transition={{ duration: 1 }}
                 />
               </div>
@@ -103,7 +134,7 @@ export default function CharacterPage() {
               </div>
 
               <div className="flex flex-col gap-3">
-                {user.stats && user.stats.map((s) => (
+                {statList.map((s) => (
                   <div key={s.key} className="flex items-center gap-3 p-2.5 rounded-lg bg-[#f5e9ce] border border-[#a37d53]">
                     <div className="flex-1">
                       <StatBar
@@ -115,7 +146,7 @@ export default function CharacterPage() {
                     </div>
                     {points > 0 && (
                       <button
-                        onClick={() => allocateStat(s.key)}
+                        onClick={() => handleAllocate(s.key)}
                         className="px-3 py-1 rounded bg-[#593e28] hover:bg-[#3b2413] text-[#f5ebd6] font-bold text-xs uppercase shadow transition-all shrink-0 active:scale-95 border border-[#8c643b]"
                       >
                         + Add

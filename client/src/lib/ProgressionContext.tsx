@@ -17,6 +17,7 @@ interface ProgressionContextValue {
   completeRequirement: (requirementId: string) => void;
   breakSealAndAscend: () => boolean;
   awardXp: (earnedXp: number, attribute: keyof ProgressionAttributes, gold: number) => void;
+  allocatePoint: (statKey: string) => void;
 }
 
 const ProgressionContext = createContext<ProgressionContextValue | null>(null);
@@ -27,6 +28,8 @@ export function ProgressionProvider({ children }: { children: ReactNode }) {
       level: PLAYER.level,
       xp: PLAYER.xp,
       gold: PLAYER.currency,
+      unallocatedPoints: PLAYER.unallocatedStatPoints ?? 3,
+      spentPoints: 0,
       attributes: {
         STR: PLAYER.stats.find((s: { key: string }) => s.key === "STR")?.value ?? 68,
         INT: PLAYER.stats.find((s: { key: string }) => s.key === "INT")?.value ?? 82,
@@ -67,6 +70,35 @@ export function ProgressionProvider({ children }: { children: ReactNode }) {
     [],
   );
 
+  const allocatePoint = useCallback((statKey: string) => {
+    setState((prev) => {
+      const unallocated = prev.unallocatedPoints ?? 0;
+      if (unallocated <= 0) return prev;
+
+      const upper = statKey.toUpperCase();
+      const attrKey: keyof ProgressionAttributes | null =
+        upper === "ROUTINE" ? "Routine"
+        : upper === "STR" ? "STR"
+        : upper === "INT" ? "INT"
+        : upper === "VIT" ? "VIT"
+        : null;
+
+      if (!attrKey) return prev;
+      const currentVal = prev.attributes[attrKey] ?? 50;
+      if (currentVal >= 100) return prev;
+
+      return {
+        ...prev,
+        unallocatedPoints: Math.max(0, unallocated - 1),
+        spentPoints: (prev.spentPoints ?? 0) + 1,
+        attributes: {
+          ...prev.attributes,
+          [attrKey]: Math.min(100, currentVal + 1),
+        },
+      };
+    });
+  }, []);
+
   const value = useMemo(
     () => ({
       state,
@@ -76,8 +108,9 @@ export function ProgressionProvider({ children }: { children: ReactNode }) {
       completeRequirement,
       breakSealAndAscend,
       awardXp,
+      allocatePoint,
     }),
-    [state, sheetOpen, openSheet, closeSheet, completeRequirement, breakSealAndAscend, awardXp],
+    [state, sheetOpen, openSheet, closeSheet, completeRequirement, breakSealAndAscend, awardXp, allocatePoint],
   );
 
   return (
