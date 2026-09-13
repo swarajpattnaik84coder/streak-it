@@ -47,17 +47,15 @@ export default function MapPanel() {
   }, [currentLevel]);
 
   return (
-    <main className="flex flex-col flex-1 min-w-0 overflow-hidden bg-rpg-bg">
+    <div className="flex flex-col shrink-0 min-w-0 bg-rpg-bg">
       {/* World Map interactive surface */}
-      <div className="flex-1 min-h-0 overflow-hidden relative">
+      <div className="h-[520px] min-h-[520px] shrink-0 relative overflow-hidden">
         <WorldMap
           currentSegmentId={currentSegmentId}
           onSegmentChange={setCurrentSegmentId}
           currentLevel={currentLevel}
         />
       </div>
-
-      <QuestBoard />
 
       {/* Map Segment Navigation Controls */}
       <MapControls
@@ -69,6 +67,9 @@ export default function MapPanel() {
         onCenterOnCurrent={handleCenterOnCurrent}
         currentLevel={currentLevel}
       />
-    </main>
+
+      {/* Today's Writs (Daily Quests) */}
+      <QuestBoard />
+    </div>
   );
 }

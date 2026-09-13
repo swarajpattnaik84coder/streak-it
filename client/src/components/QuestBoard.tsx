@@ -56,7 +56,7 @@ export default function QuestBoard() {
   return (
     <section
       aria-label="Daily quest board"
-      className="shrink-0 px-3 pt-2 pb-1"
+      className="shrink-0 px-3 pt-2 pb-6"
       style={{
         background: "linear-gradient(180deg, #120e0a 0%, #0a090f 100%)",
         borderTop: "1px solid #2a2118",
@@ -70,7 +70,7 @@ export default function QuestBoard() {
           Routine labor tires the realm. Core trials restore full honor.
         </p>
       </div>
-      <div className="overflow-x-auto overflow-y-hidden flex flex-row flex-nowrap gap-4 pb-3 scrollbar-thin">
+      <div className="overflow-x-auto overflow-y-hidden flex flex-row flex-nowrap gap-4 pb-4 pt-1 scrollbar-thin">
         {(QUESTS as Quest[]).map((quest, i) => {
           const count = countForDifficulty(quest.difficulty);
           const isFulfilled = fulfilled.has(quest.id);

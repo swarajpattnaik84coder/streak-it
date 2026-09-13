@@ -40,15 +40,13 @@ export default function AppLayout() {
             {/* Center content view based on activeNav */}
             <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
               {activeNav === "calendar" && (
-                <div className="flex-1 flex flex-col min-h-0 overflow-hidden relative">
-                  {/* World Map */}
-                  <div className="flex-1 min-h-0 relative">
-                    <MapPanel />
-                  </div>
+                <div className="flex-1 overflow-y-auto h-full scrollbar-thin flex flex-col min-h-0 relative">
+                  {/* World Map & Today's Writs */}
+                  <MapPanel />
 
                   {/* Collapsible Daily Task Manager Drawer */}
-                  <div className="border-t border-[#1f1d30] bg-[#090814] max-h-[45vh] overflow-y-auto">
-                    <div className="flex items-center justify-between px-4 py-1.5 bg-[#0e0c1e] border-b border-[#1c1930] sticky top-0 z-10">
+                  <div className="border-t border-[#1f1d30] bg-[#090814] shrink-0 pb-20">
+                    <div className="flex items-center justify-between px-4 py-2 bg-[#0e0c1e] border-b border-[#1c1930] sticky top-0 z-10">
                       <span className="text-[10px] font-cinzel font-bold text-amber-400 uppercase tracking-widest">
                         ⚔️ Daily Quest Log & Real-World Tasks
                       </span>
