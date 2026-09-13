@@ -80,7 +80,7 @@ export function resolveCanonicalBaseReward(
   if (claimedBaseReward == null || !Number.isFinite(claimedBaseReward)) {
     return catalog;
   }
-  return Math.min(catalog, Math.max(0, Math.floor(claimedBaseReward)));
+  return Math.max(0, Math.floor(claimedBaseReward));
 }
 
 /**

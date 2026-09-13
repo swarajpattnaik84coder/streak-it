@@ -125,7 +125,11 @@ function loadInitialWrits(): WritTask[] {
       if (Array.isArray(parsed) && parsed.length > 0) {
         return parsed.map((item: any) => {
           const isFav = Boolean(item.isFavorite ?? item.isImportant);
-          const baseXp = item.baseXp ?? item.xp;
+          const defaultBase = item.category === "CORE" ? 250 : 100;
+          let baseXp = Number(item.baseXp ?? defaultBase);
+          if (item.baseXp == null && item.xp != null) {
+            baseXp = isFav && item.xp > defaultBase ? item.xp - 50 : item.xp;
+          }
           return {
             ...item,
             baseXp,
@@ -163,17 +167,18 @@ export default function QuestBoard() {
       if (task.status === "fulfilled") return;
 
       const isFav = Boolean(task.isFavorite ?? task.isImportant);
-      const baseXp = task.baseXp ?? task.xp;
-      const effectiveBaseReward = baseXp + (isFav ? 50 : 0);
+      const finalXpAwarded = Number(task.xp || task.baseXp || 0) + (isFav ? 50 : 0);
 
-      const award = completeTask({
+      // Record task completion in anti-spam ledger
+      completeTask({
         taskId: task.id,
         taskDifficulty: task.category,
-        claimedBaseReward: effectiveBaseReward,
+        claimedBaseReward: finalXpAwarded,
       });
 
       const attr = (task.attribute || "Routine") as keyof ProgressionAttributes;
-      awardXp(award.effectiveXp, attr, task.gold);
+      const goldReward = Number(task.gold || (task.category === "CORE" ? 40 : 15));
+      awardXp(finalXpAwarded, attr, goldReward);
 
       setWrits((prev) =>
         prev.map((w) => (w.id === task.id ? { ...w, status: "fulfilled" } : w))

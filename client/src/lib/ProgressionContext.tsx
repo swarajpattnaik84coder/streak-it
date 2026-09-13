@@ -17,6 +17,7 @@ interface ProgressionContextValue {
   completeRequirement: (requirementId: string) => void;
   breakSealAndAscend: () => boolean;
   awardXp: (earnedXp: number, attribute: keyof ProgressionAttributes, gold: number) => void;
+  addXp: (earnedXp: number, attribute?: keyof ProgressionAttributes, gold?: number) => void;
   allocatePoint: (statKey: string) => void;
 }
 
@@ -70,6 +71,13 @@ export function ProgressionProvider({ children }: { children: ReactNode }) {
     [],
   );
 
+  const addXp = useCallback(
+    (earnedXp: number, attribute: keyof ProgressionAttributes = "Routine", gold: number = 0) => {
+      setState((prev) => applyXpToState(prev, earnedXp, gold, attribute));
+    },
+    [],
+  );
+
   const allocatePoint = useCallback((statKey: string) => {
     setState((prev) => {
       const unallocated = prev.unallocatedPoints ?? 0;
@@ -108,9 +116,10 @@ export function ProgressionProvider({ children }: { children: ReactNode }) {
       completeRequirement,
       breakSealAndAscend,
       awardXp,
+      addXp,
       allocatePoint,
     }),
-    [state, sheetOpen, openSheet, closeSheet, completeRequirement, breakSealAndAscend, awardXp, allocatePoint],
+    [state, sheetOpen, openSheet, closeSheet, completeRequirement, breakSealAndAscend, awardXp, addXp, allocatePoint],
   );
 
   return (

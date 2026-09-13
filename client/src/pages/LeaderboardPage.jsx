@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import axiosInstance from "../api/axiosInstance.js";
 import { useAuth } from "../context/AuthContext.jsx";
-import Badge from "../components/ui/Badge.jsx";
+import { useProgression } from "../lib/ProgressionContext";
 
 const MOCK_LEADERBOARD = [
   { _id: "h1", rank: 1, name: "Valerius the Undaunted", class: "Paladin", level: 19, xp: 4820, streak: 42, equippedTitle: "Realm Champion", currency: 3400 },
@@ -10,6 +10,7 @@ const MOCK_LEADERBOARD = [
   { _id: "h3", rank: 3, name: "Kaelen Shadowblade", class: "Rogue", level: 14, xp: 3100, streak: 27, equippedTitle: "Nightstalker", currency: 2100 },
   { _id: "h4", rank: 4, name: "Theron Ironhide", class: "Warrior", level: 12, xp: 2650, streak: 21, equippedTitle: "Shield of Oakhaven", currency: 1800 },
   { _id: "h5", rank: 5, name: "Elowen Sunfire", class: "Cleric", level: 10, xp: 2100, streak: 18, equippedTitle: "Beacon of Light", currency: 1500 },
+  { _id: "h6", rank: 6, name: "Aeldric", class: "Shadow Warden", level: 10, xp: 450, streak: 14, equippedTitle: "Iron Squire", currency: 840 },
 ];
 
 export default function LeaderboardPage() {
@@ -17,21 +18,64 @@ export default function LeaderboardPage() {
   const [leaderboard, setLeaderboard] = useState(MOCK_LEADERBOARD);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
+  const { state } = useProgression();
+
+  const currentUserName = (user?.name || user?.username || state?.name || "Aeldric").trim().toLowerCase();
 
   useEffect(() => {
     async function fetchLeaderboard() {
       setLoading(true);
       try {
         const res = await axiosInstance.get(`/leaderboard?sortBy=${sortBy}`);
-        if (res.data && res.data.leaderboard) {
-          setLeaderboard(res.data.leaderboard);
+        if (res.data && res.data.leaderboard && Array.isArray(res.data.leaderboard)) {
+          // If the backend response doesn't include the current user, ensure Aeldric is merged
+          const exists = res.data.leaderboard.some(
+            (item) => (item.name || item.username || "").trim().toLowerCase() === currentUserName
+          );
+          if (!exists) {
+            setLeaderboard([...res.data.leaderboard, MOCK_LEADERBOARD[5]]);
+          } else {
+            setLeaderboard(res.data.leaderboard);
+          }
         }
-      } catch (err) {} finally {
+      } catch {
+        // Fallback to local mock data
+      } finally {
         setLoading(false);
       }
     }
     fetchLeaderboard();
-  }, [sortBy]);
+  }, [sortBy, currentUserName]);
+
+  // Sort rows based on selected tab and reassign sequential ranks
+  const sortedLeaderboard = [...leaderboard]
+    .sort((a, b) => {
+      const aIsCurrent = Boolean(
+        currentUserName &&
+          (a.name?.trim().toLowerCase() === currentUserName ||
+            a.username?.trim().toLowerCase() === currentUserName)
+      );
+      const bIsCurrent = Boolean(
+        currentUserName &&
+          (b.name?.trim().toLowerCase() === currentUserName ||
+            b.username?.trim().toLowerCase() === currentUserName)
+      );
+
+      const aLevel = aIsCurrent && state?.level ? state.level : (a.level || 0);
+      const bLevel = bIsCurrent && state?.level ? state.level : (b.level || 0);
+      const aStreak = aIsCurrent && user?.streak != null ? user.streak : (a.streak || 0);
+      const bStreak = bIsCurrent && user?.streak != null ? user.streak : (b.streak || 0);
+      const aXp = aIsCurrent && state?.xp != null ? state.xp : (a.xp || 0);
+      const bXp = bIsCurrent && state?.xp != null ? state.xp : (b.xp || 0);
+
+      if (sortBy === "streak") return bStreak - aStreak || bLevel - aLevel;
+      if (sortBy === "xp") return bXp - aXp || bLevel - aLevel;
+      return bLevel - aLevel || bXp - aXp;
+    })
+    .map((item, index) => ({
+      ...item,
+      rank: index + 1,
+    }));
 
   return (
     <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[#140e0a] text-[#2b1d0e]">
@@ -86,16 +130,28 @@ export default function LeaderboardPage() {
                 Querying realm archives...
               </div>
             ) : (
-              leaderboard.map((item, idx) => {
-                const isCurrentUser = user && (item.name === user.name || item.username === user.username);
+              sortedLeaderboard.map((item, idx) => {
+                // Strictly evaluate whether this row is the current logged-in character
+                const isCurrentUser = Boolean(
+                  currentUserName &&
+                    (item.name?.trim().toLowerCase() === currentUserName ||
+                      item.username?.trim().toLowerCase() === currentUserName)
+                );
                 const rank = item.rank || idx + 1;
+                const level = isCurrentUser && state?.level ? state.level : (item.level || 0);
+                const xp = isCurrentUser && state?.xp != null ? state.xp : (item.xp || 0);
+                const streak = isCurrentUser && user?.streak != null ? user.streak : (item.streak || 0);
+                const title =
+                  isCurrentUser && state?.tier
+                    ? (state.tier.title || state.tier.name)
+                    : (item.equippedTitle || item.class || "Shadow Warden");
 
                 return (
                   <motion.div
                     key={item._id || idx}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: idx * 0.05 }}
+                    transition={{ delay: idx * 0.04 }}
                     className={`grid grid-cols-12 gap-2 items-center p-3.5 transition-colors ${
                       isCurrentUser
                         ? "bg-[#c49339]/30 border-l-4 border-l-[#8c4b18]"
@@ -121,13 +177,13 @@ export default function LeaderboardPage() {
                             {item.name || item.username}
                           </p>
                           {isCurrentUser && (
-                            <span className="px-1.5 py-0.5 rounded text-[8px] font-black bg-[#8c4b18] text-[#f5ebd6]">
-                              YOU
+                            <span className="px-1.5 py-0.5 rounded text-[8px] font-black bg-[#8c4b18] text-[#f5ebd6] tracking-wider uppercase">
+                              [YOU]
                             </span>
                           )}
                         </div>
                         <p className="text-[10px] text-[#6e4e31] font-crimson font-semibold truncate">
-                          {item.equippedTitle || item.class || "Shadow Warden"}
+                          {title}
                         </p>
                       </div>
                     </div>
@@ -135,18 +191,18 @@ export default function LeaderboardPage() {
                     {/* Level */}
                     <div className="col-span-2 sm:col-span-2 text-center">
                       <span className="px-2 py-0.5 rounded text-xs font-black bg-[#593e28] text-[#f5ebd6]">
-                        Lv. {item.level}
+                        Lv. {level}
                       </span>
                     </div>
 
                     {/* Streak */}
                     <div className="col-span-3 sm:col-span-2 text-center text-xs font-black text-[#8c3b18]">
-                      🔥 {item.streak} days
+                      🔥 {streak} days
                     </div>
 
                     {/* XP */}
                     <div className="hidden sm:block sm:col-span-2 text-right text-xs font-bold text-[#6d4c2b] tabular-nums">
-                      {(item.xp || 0).toLocaleString()} XP
+                      {xp.toLocaleString()} XP
                     </div>
                   </motion.div>
                 );
