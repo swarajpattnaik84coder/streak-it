@@ -22,7 +22,9 @@ export function AuthProvider({ children }) {
   });
   const [tasks, setTasks] = useState(DEFAULT_TASKS);
   const [token, setToken] = useState(localStorage.getItem("streak_token") || null);
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  // Start unauthenticated — only set to true after login/register/demoLogin
+  // or after fetchUser successfully validates a stored token.
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(false);
   const [levelUpMessage, setLevelUpMessage] = useState(null);
 
@@ -55,7 +57,8 @@ export function AuthProvider({ children }) {
         setIsAuthenticated(true);
       }
     } catch (err) {
-      // Keep default local user state if offline
+      // Token invalid or server offline — stay on login page
+      setIsAuthenticated(false);
     }
   }, []);
 
@@ -83,26 +86,41 @@ export function AuthProvider({ children }) {
     setLoading(true);
     try {
       const res = await axiosInstance.post("/auth/login", { email, password });
+      const serverUser = res.data.user || {};
+      const normalisedUser = { ...serverUser, name: serverUser.name || serverUser.username || email };
       setToken(res.data.token);
-      setUser(res.data.user);
+      setUser(normalisedUser);
       setIsAuthenticated(true);
       setLoading(false);
       return { success: true };
     } catch (err) {
       setLoading(false);
-      return { success: false, message: err.response?.data?.message || "Login failed" };
+      // Server unreachable → local demo session so flow can be tested
+      if (!err.response) {
+        const derivedName = email.split("@")[0] || "Adventurer";
+        setUser({ ...DEFAULT_PLAYER, name: derivedName, username: derivedName });
+        setIsAuthenticated(true);
+        return { success: true, offline: true };
+      }
+      return { success: false, message: err.response?.data?.message || "Invalid credentials. Please try again." };
     }
   };
 
   const register = async (username, email, password) => {
     setLoading(true);
     try {
-      const res = await axiosInstance.post("/auth/register", { username, email, password });
-      setToken(res.data.token);
+      // Send both username AND name so the backend display name is always set
+      const res = await axiosInstance.post("/auth/register", { username, email, password, name: username });
+      // Normalise: ensure user.name is always set (backend may return username instead)
+      const serverUser = res.data.user || {};
+      if (res.data.token) {
+        setToken(res.data.token);
+      }
       const freshUser = {
         ...NEW_PLAYER_PRESET,
-        ...res.data.user,
-        name: username || res.data.user?.name || "Novice Wanderer",
+        ...serverUser,
+        name: serverUser.name || serverUser.username || username || "Novice Wanderer",
+        username: serverUser.username || username,
         level: 1,
         xp: 0,
         currentXp: 0,
@@ -123,34 +141,38 @@ export function AuthProvider({ children }) {
         localStorage.setItem("streak_user", JSON.stringify(freshUser));
       } catch {}
       return { success: true };
-    } catch {
-      // Local fallback for new user registration
-      const freshUser = {
-        ...NEW_PLAYER_PRESET,
-        _id: "local_user_" + Date.now(),
-        username,
-        email,
-        name: username || "Novice Wanderer",
-        level: 1,
-        xp: 0,
-        currentXp: 0,
-        xpToNext: 100,
-        xpRequired: 100,
-        currency: 50,
-        gold: 50,
-        streak: 0,
-        title: "Novice Wanderer",
-        equippedTitle: "Novice Wanderer",
-        tier: "T1 Novice",
-      };
-      setUser(freshUser);
-      setIsAuthenticated(true);
+    } catch (err) {
       setLoading(false);
-      try {
-        localStorage.removeItem("streak_player_progression");
-        localStorage.setItem("streak_user", JSON.stringify(freshUser));
-      } catch {}
-      return { success: true };
+      const serverMsg = err.response?.data?.message;
+      // If the server is simply unreachable (network error), offer a local session with fresh player preset
+      if (!err.response) {
+        const freshUser = {
+          ...NEW_PLAYER_PRESET,
+          _id: "local_user_" + Date.now(),
+          username,
+          email,
+          name: username || "Novice Wanderer",
+          level: 1,
+          xp: 0,
+          currentXp: 0,
+          xpToNext: 100,
+          xpRequired: 100,
+          currency: 50,
+          gold: 50,
+          streak: 0,
+          title: "Novice Wanderer",
+          equippedTitle: "Novice Wanderer",
+          tier: "T1 Novice",
+        };
+        setUser(freshUser);
+        setIsAuthenticated(true);
+        try {
+          localStorage.removeItem("streak_player_progression");
+          localStorage.setItem("streak_user", JSON.stringify(freshUser));
+        } catch {}
+        return { success: true, offline: true };
+      }
+      return { success: false, message: serverMsg || "Registration failed. Please try again." };
     }
   };
 
