@@ -45,23 +45,23 @@ export default function StorePage() {
   const ownedItems = items.filter((i) => (user.inventory || []).includes(i.itemId));
 
   return (
-    <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[#07070e] text-stone-100">
-      <div className="max-w-4xl mx-auto flex flex-col gap-6">
+    <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[#140e0a] text-[#2b1d0e]">
+      <div className="max-w-4xl mx-auto flex flex-col gap-6 font-cinzel">
 
         {/* Header & Gold Display */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl border border-rpg bg-gradient-to-r from-[#121024] to-[#0a0914]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl border-2 border-[#593e28] bg-[#e8d7b5] shadow-xl">
           <div>
-            <h1 className="text-xl font-cinzel font-bold text-gold tracking-widest uppercase">
+            <h1 className="text-xl font-black text-[#3b2413] tracking-widest uppercase">
               The Merchant Bazaar (Store)
             </h1>
-            <p className="text-xs text-rpg-muted font-crimson mt-1">
+            <p className="text-xs text-[#6e4e31] font-crimson font-semibold mt-1">
               Spend Gold earned from completing daily tasks on gear, potion boosters, titles, and crests
             </p>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="px-4 py-2 rounded-lg bg-[#151226] border border-amber-500/40 text-center">
-              <span className="text-xs font-cinzel font-bold text-gold tabular-nums">
+            <div className="px-4 py-2 rounded-lg bg-[#593e28] text-[#f5ebd6] text-center border border-[#8c643b]">
+              <span className="text-xs font-black tabular-nums">
                 💰 {user.currency} Gold
               </span>
             </div>
@@ -73,10 +73,10 @@ export default function StorePage() {
           <motion.div
             initial={{ opacity: 0, y: -5 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`p-3 rounded-lg text-xs font-cinzel font-bold text-center border ${
+            className={`p-3 rounded-lg text-xs font-black text-center border-2 ${
               message.includes("Successfully")
-                ? "bg-amber-950/60 border-amber-500 text-amber-300"
-                : "bg-red-950/60 border-red-800 text-red-400"
+                ? "bg-[#e8d7b5] border-[#593e28] text-[#3b2413]"
+                : "bg-red-950 border-red-800 text-red-300"
             }`}
           >
             {message}
@@ -88,20 +88,20 @@ export default function StorePage() {
           <div className="flex gap-2">
             <button
               onClick={() => setActiveTab("shop")}
-              className={`px-4 py-2 rounded-lg font-cinzel text-xs font-bold transition-all ${
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all border ${
                 activeTab === "shop"
-                  ? "bg-amber-500 text-stone-950 shadow-md"
-                  : "bg-[#100f20] text-stone-400 hover:text-stone-200 border border-[#201d36]"
+                  ? "bg-[#593e28] text-[#f5ebd6] border-[#8c643b] shadow-md"
+                  : "bg-[#251d16] text-stone-300 hover:text-white border-[#423122]"
               }`}
             >
               🛒 Shop Bazaar
             </button>
             <button
               onClick={() => setActiveTab("inventory")}
-              className={`px-4 py-2 rounded-lg font-cinzel text-xs font-bold transition-all ${
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all border ${
                 activeTab === "inventory"
-                  ? "bg-amber-500 text-stone-950 shadow-md"
-                  : "bg-[#100f20] text-stone-400 hover:text-stone-200 border border-[#201d36]"
+                  ? "bg-[#593e28] text-[#f5ebd6] border-[#8c643b] shadow-md"
+                  : "bg-[#251d16] text-stone-300 hover:text-white border-[#423122]"
               }`}
             >
               🎒 My Inventory ({ownedItems.length})
@@ -109,15 +109,15 @@ export default function StorePage() {
           </div>
 
           {activeTab === "shop" && (
-            <div className="flex gap-1.5 p-1 rounded-lg bg-[#0a0914] border border-[#201d36]">
+            <div className="flex gap-1.5 p-1 rounded-lg bg-[#251d16] border border-[#593e28]">
               {["all", "booster", "gear", "title", "badge"].map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setCategoryFilter(cat)}
-                  className={`px-2.5 py-1 rounded text-[10px] font-cinzel uppercase transition-colors ${
+                  className={`px-2.5 py-1 rounded text-[10px] uppercase transition-colors ${
                     categoryFilter === cat
-                      ? "bg-amber-950/50 text-amber-400 font-bold border border-amber-500/40"
-                      : "text-stone-400 hover:text-stone-200"
+                      ? "bg-[#593e28] text-[#f5ebd6] font-bold border border-[#8c643b]"
+                      : "text-stone-300 hover:text-white"
                   }`}
                 >
                   {cat}
@@ -138,47 +138,47 @@ export default function StorePage() {
                 <motion.div
                   key={item.itemId}
                   whileHover={{ y: -3 }}
-                  className={`p-4 rounded-xl border flex flex-col justify-between gap-3 transition-all ${
+                  className={`p-4 rounded-xl border-2 flex flex-col justify-between gap-3 transition-all shadow-md ${
                     isOwned
-                      ? "bg-[#0b0a16] border-[#1e1c30] opacity-75"
-                      : "bg-[#121024] border-[#252142] hover:border-amber-500/50"
+                      ? "bg-[#d9c6a3]/70 border-[#8c6e51] opacity-75"
+                      : "bg-[#ede1c4] border-[#593e28] hover:border-[#8c643b]"
                   }`}
                 >
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-2xl">{item.icon}</span>
-                      <span className="px-2 py-0.5 rounded text-[9px] font-bold font-cinzel uppercase bg-[#1d1933] text-stone-300 border border-[#312b54]">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase bg-[#593e28] text-[#f5ebd6]">
                         {item.category}
                       </span>
                     </div>
 
-                    <h3 className="text-xs font-cinzel font-bold text-stone-100">{item.name}</h3>
-                    <p className="text-[11px] text-rpg-muted font-crimson mt-1">{item.description}</p>
+                    <h3 className="text-xs font-black text-[#3b2413]">{item.name}</h3>
+                    <p className="text-[11px] text-[#6e4e31] font-crimson font-semibold mt-1">{item.description}</p>
 
                     {item.statBonus && item.statBonus.key && (
-                      <div className="mt-2 text-[10px] font-cinzel text-amber-400">
+                      <div className="mt-2 text-[10px] font-bold text-[#8c4b18]">
                         Bonus: +{item.statBonus.amount} {item.statBonus.key}
                       </div>
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between pt-3 border-t border-[#1e1c32]">
-                    <span className="text-xs font-cinzel font-bold text-gold tabular-nums">
+                  <div className="flex items-center justify-between pt-3 border-t border-[#a37d53]">
+                    <span className="text-xs font-black text-[#6d4c2b] tabular-nums">
                       💰 {item.price} Gold
                     </span>
 
                     {isOwned ? (
-                      <span className="px-3 py-1 rounded text-[10px] font-cinzel font-bold bg-stone-800 text-stone-400">
+                      <span className="px-3 py-1 rounded text-[10px] font-bold bg-[#8c6e51] text-[#f5ebd6]">
                         OWNED
                       </span>
                     ) : (
                       <button
                         onClick={() => handleBuy(item)}
                         disabled={!canAfford}
-                        className={`px-3 py-1.5 rounded text-xs font-cinzel font-bold uppercase transition-all shadow ${
+                        className={`px-3 py-1.5 rounded text-xs font-bold uppercase transition-all shadow border ${
                           canAfford
-                            ? "bg-amber-500 hover:bg-amber-400 text-stone-950 active:scale-95"
-                            : "bg-stone-800 text-stone-500 cursor-not-allowed"
+                            ? "bg-[#593e28] hover:bg-[#3b2413] text-[#f5ebd6] border-[#8c643b] active:scale-95"
+                            : "bg-[#a89078] text-[#593e28] cursor-not-allowed border-transparent"
                         }`}
                       >
                         Buy Item
@@ -193,31 +193,31 @@ export default function StorePage() {
 
         {/* Tab 2: My Inventory */}
         {activeTab === "inventory" && (
-          <div className="p-5 rounded-xl border border-rpg bg-[#0a0914] flex flex-col gap-4">
-            <h2 className="text-sm font-cinzel font-bold text-stone-200 uppercase tracking-wider">
+          <div className="p-5 rounded-xl border-2 border-[#593e28] bg-[#e8d7b5] flex flex-col gap-4 shadow-xl">
+            <h2 className="text-sm font-black text-[#3b2413] uppercase tracking-wider">
               Acquired Treasures & Inventory
             </h2>
 
             {ownedItems.length === 0 ? (
-              <div className="p-8 text-center text-xs text-rpg-muted font-crimson">
+              <div className="p-8 text-center text-xs text-[#593e28] font-crimson font-semibold">
                 Your inventory is currently empty. Visit the Shop Bazaar to purchase items!
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 font-crimson">
                 {ownedItems.map((item) => (
                   <div
                     key={item.itemId}
-                    className="p-3.5 rounded-lg border border-[#231f3e] bg-[#121022] flex items-center justify-between gap-3"
+                    className="p-3.5 rounded-lg border-2 border-[#593e28] bg-[#f5e9ce] flex items-center justify-between gap-3"
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-2xl">{item.icon}</span>
                       <div>
-                        <h3 className="text-xs font-cinzel font-bold text-stone-100">{item.name}</h3>
-                        <p className="text-[10px] text-rpg-muted font-crimson">{item.description}</p>
+                        <h3 className="text-xs font-cinzel font-black text-[#3b2413]">{item.name}</h3>
+                        <p className="text-[10px] text-[#6e4e31] font-semibold">{item.description}</p>
                       </div>
                     </div>
 
-                    <span className="px-2.5 py-1 rounded text-[10px] font-cinzel font-bold bg-amber-950/60 border border-amber-500/40 text-amber-300 uppercase">
+                    <span className="px-2.5 py-1 rounded text-[10px] font-cinzel font-bold bg-[#593e28] text-[#f5ebd6] uppercase">
                       EQUIPPED
                     </span>
                   </div>

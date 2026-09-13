@@ -4,11 +4,11 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import TaskModal from "./TaskModal.jsx";
 
 const CAT_COLORS = {
-  STR: "#ef4444",
-  INT: "#3b82f6",
-  FOC: "#a855f7",
-  AGI: "#22c55e",
-  VIT: "#f97316",
+  STR: "#8c3b18",
+  INT: "#2b568c",
+  FOC: "#643b8c",
+  AGI: "#2b7a42",
+  VIT: "#8c5818",
 };
 
 export default function TaskManager() {
@@ -23,7 +23,7 @@ export default function TaskManager() {
   });
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-4 flex flex-col gap-4">
+    <div className="w-full max-w-3xl mx-auto p-4 flex flex-col gap-4 font-cinzel">
       {/* Level Up Banner Notification */}
       <AnimatePresence>
         {levelUpMessage && (
@@ -31,27 +31,27 @@ export default function TaskManager() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="p-3 rounded-lg bg-gradient-to-r from-amber-500 to-amber-700 text-stone-950 font-cinzel font-bold text-center text-sm shadow-xl tracking-wider"
+            className="p-3.5 rounded-lg bg-gradient-to-r from-[#c49339] to-[#8c6421] text-[#2c1b0e] font-black text-center text-sm shadow-xl tracking-widest uppercase border-2 border-[#5c4028]"
           >
             ⚔️ {levelUpMessage}
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Task Manager Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl border border-rpg bg-[#0f0e1c]">
+      {/* Task Manager Parchment Header */}
+      <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl border-2 border-[#593e28] bg-[#e8d7b5] shadow-lg text-[#2b1d0e]">
         <div>
-          <h2 className="text-base font-cinzel font-bold text-stone-100 uppercase tracking-widest">
-            Daily Task Log (Quests)
+          <h2 className="text-base font-black uppercase tracking-widest text-[#3b2413]">
+            Daily Quest Log & Tasks
           </h2>
-          <p className="text-xs text-rpg-muted font-crimson">
+          <p className="text-xs font-crimson text-[#6e4e31]">
             Complete real-world tasks to level up your character and gain Gold
           </p>
         </div>
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="px-3.5 py-2 rounded bg-amber-500 hover:bg-amber-400 text-stone-950 font-cinzel font-bold text-xs tracking-wider uppercase transition-all shadow-md active:scale-95"
+          className="px-4 py-2 rounded-lg bg-[#593e28] hover:bg-[#3b2413] text-[#f5ebd6] font-bold text-xs tracking-wider uppercase transition-all shadow-md active:scale-95 border border-[#8c643b]"
         >
           + Add Quest
         </button>
@@ -63,10 +63,10 @@ export default function TaskManager() {
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-3 py-1 rounded text-xs font-cinzel capitalize transition-colors ${
+            className={`px-3 py-1.5 rounded-md text-xs uppercase font-bold transition-all border ${
               filter === f
-                ? "bg-amber-950/50 border border-amber-500/50 text-amber-300 font-bold"
-                : "bg-[#141224] text-stone-400 hover:text-stone-200 border border-transparent"
+                ? "bg-[#593e28] border-[#8c643b] text-[#f5ebd6] shadow-md"
+                : "bg-[#251d16] text-[#b89f84] hover:text-[#f5ebd6] border-[#423122]"
             }`}
           >
             {f} ({tasks.filter((t) => (f === "pending" ? !t.isCompleted : f === "completed" ? t.isCompleted : true)).length})
@@ -74,10 +74,10 @@ export default function TaskManager() {
         ))}
       </div>
 
-      {/* Tasks List */}
-      <div className="flex flex-col gap-2.5">
+      {/* Tasks Parchment Cards List */}
+      <div className="flex flex-col gap-2.5 font-crimson">
         {filteredTasks.length === 0 ? (
-          <div className="p-8 text-center rounded-xl border border-rpg bg-[#0b0a16] text-rpg-muted text-xs font-crimson">
+          <div className="p-8 text-center rounded-xl border-2 border-[#593e28] bg-[#e8d7b5] text-[#593e28] text-sm font-semibold">
             No quests found in this category. Add a new task to get started!
           </div>
         ) : (
@@ -88,21 +88,21 @@ export default function TaskManager() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className={`flex items-center justify-between gap-3 p-3.5 rounded-lg border transition-all ${
+              className={`flex items-center justify-between gap-3 p-3.5 rounded-lg border-2 transition-all shadow-md ${
                 t.isCompleted
-                  ? "bg-[#0a0914]/60 border-[#1e1c30] opacity-75"
-                  : "bg-[#131126] border-[#252240] hover:border-amber-500/40"
+                  ? "bg-[#d9c6a3]/70 border-[#8c6e51] opacity-75"
+                  : "bg-[#ede1c4] border-[#593e28] hover:border-[#8c643b]"
               }`}
             >
-              <div className="flex items-center gap-3 min-w-0 flex-1">
+              <div className="flex items-center gap-3.5 min-w-0 flex-1">
                 {/* Checkbox */}
                 <button
                   type="button"
                   onClick={() => toggleTask(t._id)}
-                  className={`w-5 h-5 rounded flex items-center justify-center border transition-all ${
+                  className={`w-6 h-6 rounded flex items-center justify-center border-2 transition-all ${
                     t.isCompleted
-                      ? "bg-amber-500 border-amber-400 text-stone-950 font-bold"
-                      : "border-stone-600 hover:border-amber-400 bg-[#0d0c18]"
+                      ? "bg-[#593e28] border-[#3b2413] text-[#f5ebd6] font-bold text-sm"
+                      : "border-[#7a552b] hover:border-[#3b2413] bg-[#f5e9ce]"
                   }`}
                 >
                   {t.isCompleted && "✓"}
@@ -111,21 +111,21 @@ export default function TaskManager() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <span
-                      className="px-1.5 py-0.5 rounded text-[9px] font-bold font-cinzel text-white uppercase"
-                      style={{ backgroundColor: CAT_COLORS[t.category] || "#a855f7" }}
+                      className="px-2 py-0.5 rounded text-[9px] font-bold font-cinzel text-white uppercase"
+                      style={{ backgroundColor: CAT_COLORS[t.category] || "#643b8c" }}
                     >
                       {t.category}
                     </span>
                     <h3
-                      className={`text-xs font-semibold truncate ${
-                        t.isCompleted ? "line-through text-stone-500" : "text-stone-100"
+                      className={`text-sm font-bold truncate ${
+                        t.isCompleted ? "line-through text-[#7a634b]" : "text-[#2b1d0e]"
                       }`}
                     >
                       {t.title}
                     </h3>
                   </div>
                   {t.description && (
-                    <p className="text-[11px] text-rpg-muted truncate mt-0.5 font-crimson">
+                    <p className="text-xs text-[#59432d] truncate mt-0.5">
                       {t.description}
                     </p>
                   )}
@@ -133,16 +133,16 @@ export default function TaskManager() {
               </div>
 
               {/* Rewards & Actions */}
-              <div className="flex items-center gap-3 shrink-0">
-                <div className="flex items-center gap-2 text-[10px] font-cinzel">
-                  <span className="text-amber-400 font-bold">+{t.xpReward} XP</span>
-                  <span className="text-gold font-bold">+{t.currencyReward} Gold</span>
+              <div className="flex items-center gap-3 shrink-0 font-cinzel">
+                <div className="flex items-center gap-2 text-xs font-bold">
+                  <span className="text-[#8c4b18]">+{t.xpReward} XP</span>
+                  <span className="text-[#6d4c2b]">+{t.currencyReward} Gold</span>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => deleteTask(t._id)}
-                  className="text-stone-600 hover:text-red-400 text-sm leading-none p-1 transition-colors"
+                  className="text-[#8c5828] hover:text-red-800 text-base leading-none p-1 transition-colors font-bold"
                 >
                   ✕
                 </button>

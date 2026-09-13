@@ -27,7 +27,6 @@ export default function VaultPage() {
           setAchievements(res.data.achievements || []);
         }
       } catch (err) {
-        // Fallback computation
         const computed = DEFAULT_ACHIEVEMENTS.map(ach => {
           let progress = 0;
           if (ach.type === "quests") progress = user.completedQuestsCount || 12;
@@ -50,83 +49,83 @@ export default function VaultPage() {
   }, [user]);
 
   return (
-    <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[#07070e] text-stone-100">
-      <div className="max-w-4xl mx-auto flex flex-col gap-6">
+    <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[#140e0a] text-[#2b1d0e]">
+      <div className="max-w-4xl mx-auto flex flex-col gap-6 font-cinzel">
 
         {/* Page Header */}
-        <div className="p-5 rounded-xl border border-rpg bg-gradient-to-r from-[#121024] to-[#0a0914]">
-          <h1 className="text-xl font-cinzel font-bold text-gold tracking-widest uppercase">
+        <div className="p-5 rounded-xl border-2 border-[#593e28] bg-[#e8d7b5] shadow-xl">
+          <h1 className="text-xl font-black text-[#3b2413] tracking-widest uppercase">
             The Royal Vault & Quest History
           </h1>
-          <p className="text-xs text-rpg-muted font-crimson mt-1">
+          <p className="text-xs text-[#6e4e31] font-crimson font-semibold mt-1">
             Review your past achievements, completed tasks, and milestone badges earned in the realm
           </p>
         </div>
 
         {/* Overview Stats Bar */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="p-4 rounded-xl border border-rpg bg-[#0a0914] text-center">
-            <p className="text-xl font-cinzel font-bold text-amber-400 tabular-nums">
+          <div className="p-4 rounded-xl border-2 border-[#593e28] bg-[#e8d7b5] text-center shadow-md">
+            <p className="text-xl font-black text-[#6d4c2b] tabular-nums">
               {user.completedQuestsCount || 12}
             </p>
-            <p className="text-[10px] text-rpg-muted uppercase font-cinzel mt-1">Quests Completed</p>
+            <p className="text-[10px] text-[#593e28] font-bold uppercase mt-1">Quests Completed</p>
           </div>
-          <div className="p-4 rounded-xl border border-rpg bg-[#0a0914] text-center">
-            <p className="text-xl font-cinzel font-bold text-orange-400 tabular-nums">
+          <div className="p-4 rounded-xl border-2 border-[#593e28] bg-[#e8d7b5] text-center shadow-md">
+            <p className="text-xl font-black text-[#8c3b18] tabular-nums">
               🔥 {user.streak} Days
             </p>
-            <p className="text-[10px] text-rpg-muted uppercase font-cinzel mt-1">Active Streak</p>
+            <p className="text-[10px] text-[#593e28] font-bold uppercase mt-1">Active Streak</p>
           </div>
-          <div className="p-4 rounded-xl border border-rpg bg-[#0a0914] text-center">
-            <p className="text-xl font-cinzel font-bold text-gold tabular-nums">
-              {user.currency} Gold
+          <div className="p-4 rounded-xl border-2 border-[#593e28] bg-[#e8d7b5] text-center shadow-md">
+            <p className="text-xl font-black text-[#6d4c2b] tabular-nums">
+              💰 {user.currency} Gold
             </p>
-            <p className="text-[10px] text-rpg-muted uppercase font-cinzel mt-1">Vault Currency</p>
+            <p className="text-[10px] text-[#593e28] font-bold uppercase mt-1">Vault Currency</p>
           </div>
-          <div className="p-4 rounded-xl border border-rpg bg-[#0a0914] text-center">
-            <p className="text-xl font-cinzel font-bold text-purple-400 tabular-nums">
+          <div className="p-4 rounded-xl border-2 border-[#593e28] bg-[#e8d7b5] text-center shadow-md">
+            <p className="text-xl font-black text-[#8c4b18] tabular-nums">
               Lv. {user.level}
             </p>
-            <p className="text-[10px] text-rpg-muted uppercase font-cinzel mt-1">Hero Tier</p>
+            <p className="text-[10px] text-[#593e28] font-bold uppercase mt-1">Hero Tier</p>
           </div>
         </div>
 
         {/* Section 1: Realm Achievements */}
-        <div className="p-5 rounded-xl border border-rpg bg-[#0a0914] flex flex-col gap-4">
-          <h2 className="text-sm font-cinzel font-bold text-gold uppercase tracking-wider">
+        <div className="p-5 rounded-xl border-2 border-[#593e28] bg-[#e8d7b5] flex flex-col gap-4 shadow-xl">
+          <h2 className="text-sm font-black text-[#3b2413] uppercase tracking-wider">
             Realm Achievements & Trophies
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 font-crimson">
             {achievements.map((ach) => (
               <div
                 key={ach.id}
-                className={`p-3.5 rounded-lg border flex items-center gap-3 transition-all ${
+                className={`p-3.5 rounded-lg border-2 flex items-center gap-3 transition-all ${
                   ach.isUnlocked
-                    ? "bg-[#141226] border-amber-500/40"
-                    : "bg-[#0b0a16] border-[#1e1c30] opacity-60"
+                    ? "bg-[#f5e9ce] border-[#593e28] shadow"
+                    : "bg-[#d9c6a3] border-[#8c6e51] opacity-65"
                 }`}
               >
-                <div className="w-10 h-10 rounded-lg bg-[#1a172c] border border-[#2f2a4a] flex items-center justify-center text-xl shrink-0">
+                <div className="w-10 h-10 rounded-lg bg-[#593e28] border border-[#3b2413] flex items-center justify-center text-xl shrink-0 text-[#f5ebd6]">
                   {ach.icon}
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xs font-cinzel font-bold text-stone-100 truncate">
+                    <h3 className="text-xs font-cinzel font-black text-[#3b2413] truncate">
                       {ach.name}
                     </h3>
                     <span className={`text-[9px] font-cinzel font-bold px-1.5 py-0.5 rounded ${
-                      ach.isUnlocked ? "bg-amber-500/20 text-amber-400 border border-amber-500/40" : "bg-stone-800 text-stone-400"
+                      ach.isUnlocked ? "bg-[#8c4b18] text-[#f5ebd6]" : "bg-[#8c6e51] text-[#f5ebd6]"
                     }`}>
                       {ach.isUnlocked ? "UNLOCKED" : "LOCKED"}
                     </span>
                   </div>
-                  <p className="text-[11px] text-rpg-muted font-crimson mt-0.5">{ach.desc}</p>
+                  <p className="text-xs text-[#59432d] font-semibold mt-0.5">{ach.desc}</p>
 
                   {/* Progress Bar */}
-                  <div className="w-full h-1.5 rounded-full bg-[#181628] overflow-hidden mt-2">
+                  <div className="w-full h-2 rounded-full bg-[#cda574] overflow-hidden mt-2 border border-[#593e28]">
                     <div
-                      className="h-full bg-amber-400 rounded-full"
+                      className="h-full bg-[#8c4b18] rounded-full"
                       style={{ width: `${Math.min((ach.progress / ach.required) * 100, 100)}%` }}
                     />
                   </div>
@@ -137,12 +136,12 @@ export default function VaultPage() {
         </div>
 
         {/* Section 2: Completed Quest History Log */}
-        <div className="p-5 rounded-xl border border-rpg bg-[#0a0914] flex flex-col gap-4">
-          <h2 className="text-sm font-cinzel font-bold text-stone-200 uppercase tracking-wider">
+        <div className="p-5 rounded-xl border-2 border-[#593e28] bg-[#e8d7b5] flex flex-col gap-4 shadow-xl">
+          <h2 className="text-sm font-black text-[#3b2413] uppercase tracking-wider">
             Completed Quest Logs
           </h2>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 font-crimson">
             {[
               { id: "c1", title: "Complete 10 LeetCode Algorithms", cat: "INT", xp: 180, gold: 60, date: "Yesterday" },
               { id: "c2", title: "Heavy Upper Body Gym Workout", cat: "STR", xp: 160, gold: 50, date: "2 days ago" },
@@ -151,20 +150,20 @@ export default function VaultPage() {
             ].map((task) => (
               <div
                 key={task.id}
-                className="flex items-center justify-between gap-3 p-3 rounded-lg bg-[#111022] border border-[#201d36]"
+                className="flex items-center justify-between gap-3 p-3 rounded-lg bg-[#f5e9ce] border border-[#a37d53]"
               >
                 <div className="flex items-center gap-3">
-                  <span className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs font-bold">
+                  <span className="w-5 h-5 rounded-full bg-[#593e28] text-[#f5ebd6] flex items-center justify-center text-xs font-bold">
                     ✓
                   </span>
                   <div>
-                    <h3 className="text-xs font-medium text-stone-200">{task.title}</h3>
-                    <p className="text-[10px] text-rpg-muted font-crimson">{task.date}</p>
+                    <h3 className="text-xs font-bold text-[#2b1d0e]">{task.title}</h3>
+                    <p className="text-[10px] text-[#6e4e31] font-semibold">{task.date}</p>
                   </div>
                 </div>
-                <div className="text-[10px] font-cinzel flex items-center gap-2">
-                  <span className="text-amber-400 font-bold">+{task.xp} XP</span>
-                  <span className="text-gold font-bold">+{task.gold} Gold</span>
+                <div className="text-[10px] font-cinzel flex items-center gap-2 font-bold">
+                  <span className="text-[#8c4b18]">+{task.xp} XP</span>
+                  <span className="text-[#6d4c2b]">+{task.gold} Gold</span>
                 </div>
               </div>
             ))}

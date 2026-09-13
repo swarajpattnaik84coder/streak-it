@@ -18,17 +18,18 @@ export default function Sidebar({ activeId, onSelect }) {
 
   return (
     <>
-      {/* ── Desktop sidebar ─────────────────────────────────────────────── */}
+      {/* ── Desktop sidebar (Dark Slate Leather Badge Style) ─────────────── */}
       <aside
-        className="hidden sm:flex flex-col shrink-0 w-14 lg:w-52 overflow-y-auto"
+        className="hidden sm:flex flex-col shrink-0 w-16 lg:w-56 overflow-y-auto z-10 select-none shadow-2xl"
         style={{
-          background: "linear-gradient(180deg, #090910 0%, #07070e 100%)",
-          borderRight: "1px solid #1f1d30",
+          background: "linear-gradient(180deg, #181d26 0%, #12151d 100%)",
+          borderRight: "2px solid #3d2d1d",
+          boxShadow: "4px 0 20px rgba(0,0,0,0.8)",
         }}
         aria-label="Main navigation"
       >
         {/* Nav items */}
-        <nav className="flex flex-col gap-0.5 p-2 pt-3 flex-1">
+        <nav className="flex flex-col gap-1.5 p-2 pt-4 flex-1">
           {NAV_ITEMS.map((item, i) => {
             const Icon = ICONS[item.id];
             const isActive = activeId === item.id;
@@ -43,44 +44,43 @@ export default function Sidebar({ activeId, onSelect }) {
                 onClick={() => onSelect(item.id)}
                 aria-current={isActive ? "page" : undefined}
                 className={[
-                  "relative flex items-center gap-3 rounded px-2.5 py-2.5",
-                  "w-full text-left transition-all duration-200 group outline-none",
-                  "focus-visible:ring-1 focus-visible:ring-amber-500/40",
+                  "relative flex items-center gap-3.5 rounded-lg px-3 py-3",
+                  "w-full text-left transition-all duration-200 group outline-none font-cinzel border",
                   isActive
-                    ? "text-amber-400 bg-amber-950/25"
-                    : "text-rpg-muted hover:text-stone-300 hover:bg-white/[0.03]",
+                    ? "bg-gradient-to-r from-[#2a3242] to-[#1c222e] border-[#c49339] text-amber-300 shadow-lg"
+                    : "bg-[#141820]/70 border-[#262c38] text-stone-300 hover:border-[#8c643b] hover:bg-[#1f2633]",
                 ].join(" ")}
               >
-                {/* Active left indicator */}
+                {/* Active left gold indicator */}
                 {isActive && (
                   <motion.span
                     layoutId="sidebar-active"
-                    className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 rounded-r bg-amber-400"
+                    className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 rounded-r bg-[#c49339]"
                   />
                 )}
 
                 {/* Icon */}
                 {Icon && (
-                  <span className={["shrink-0 transition-colors",
-                    isActive ? "text-amber-400" : "text-rpg-muted group-hover:text-stone-400"
+                  <span className={["shrink-0 transition-colors p-1 rounded bg-[#0d1017] border border-[#2b3342]",
+                    isActive ? "text-amber-400 border-amber-500/50" : "text-stone-400 group-hover:text-amber-300"
                   ].join(" ")}>
-                    <Icon size={17} stroke="currentColor" />
+                    <Icon size={18} stroke="currentColor" />
                   </span>
                 )}
 
                 {/* Label */}
-                <span className="hidden lg:block text-[11px] font-medium tracking-wide truncate font-cinzel">
+                <span className="hidden lg:block text-xs font-bold tracking-widest truncate uppercase">
                   {item.label}
                 </span>
 
                 {/* Hover tooltip (icon-only mode) */}
                 <span className="
-                  lg:hidden absolute left-full ml-3 px-2.5 py-1
-                  bg-rpg-panel-2 border border-rpg rounded text-[11px] text-stone-200
-                  whitespace-nowrap shadow-xl z-50
+                  lg:hidden absolute left-full ml-3 px-3 py-1.5
+                  bg-[#181d26] border border-[#c49339] rounded text-xs text-amber-300
+                  whitespace-nowrap shadow-2xl z-50
                   opacity-0 pointer-events-none
                   group-hover:opacity-100 transition-opacity duration-150
-                  font-cinzel tracking-wide
+                  font-cinzel tracking-wider uppercase
                 ">
                   {item.label}
                 </span>
@@ -89,16 +89,18 @@ export default function Sidebar({ activeId, onSelect }) {
           })}
         </nav>
 
-        {/* Bottom character mini-display */}
-        <div className="p-2 pb-4" style={{ borderTop: "1px solid #161428" }}>
-          <div className="flex items-center gap-2.5 px-2.5 py-2 rounded">
-            <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 font-cinzel text-[9px] font-bold text-gold"
-              style={{ background: "#1c1608", border: "1px solid #3a2e12" }}>
+        {/* Bottom character mini-display (Parchment Card) */}
+        <div className="p-3 pb-5" style={{ borderTop: "2px solid #262c38" }}>
+          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg border bg-[#141820] border-[#2b3342]">
+            <div
+              className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-cinzel text-xs font-black text-[#2c1b0e]"
+              style={{ background: "linear-gradient(180deg, #e5d1a7 0%, #cca972 100%)", border: "1.5px solid #5c4028" }}
+            >
               {(user.name || "A").charAt(0)}
             </div>
             <div className="hidden lg:block min-w-0">
-              <p className="text-[10px] font-semibold text-stone-300 truncate font-cinzel">{user.name}</p>
-              <p className="text-[9px] text-rpg-muted truncate">{user.equippedTitle || user.class}</p>
+              <p className="text-xs font-bold text-amber-300 truncate font-cinzel">{user.name}</p>
+              <p className="text-[10px] text-stone-400 truncate font-crimson">{user.equippedTitle || user.class}</p>
             </div>
           </div>
         </div>
@@ -107,7 +109,7 @@ export default function Sidebar({ activeId, onSelect }) {
       {/* ── Mobile bottom tab bar ────────────────────────────────────────── */}
       <nav
         className="sm:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around px-2 py-2"
-        style={{ background: "#090910", borderTop: "1px solid #1f1d30" }}
+        style={{ background: "#141820", borderTop: "2px solid #3d2d1d" }}
         aria-label="Main navigation"
       >
         {NAV_ITEMS.map((item) => {
@@ -121,12 +123,12 @@ export default function Sidebar({ activeId, onSelect }) {
               aria-current={isActive ? "page" : undefined}
               aria-label={item.label}
               className={[
-                "flex flex-col items-center gap-1 px-3 py-1 rounded transition-colors",
-                isActive ? "text-amber-400" : "text-rpg-muted",
+                "flex flex-col items-center gap-1 px-3 py-1 rounded transition-colors font-cinzel",
+                isActive ? "text-amber-400 font-bold" : "text-stone-400",
               ].join(" ")}
             >
-              {Icon && <Icon size={19} stroke="currentColor" />}
-              <span className="text-[9px] font-medium font-cinzel">{item.label}</span>
+              {Icon && <Icon size={18} stroke="currentColor" />}
+              <span className="text-[9px] font-bold uppercase">{item.label}</span>
             </button>
           );
         })}

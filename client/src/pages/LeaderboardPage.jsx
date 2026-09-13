@@ -26,9 +26,7 @@ export default function LeaderboardPage() {
         if (res.data && res.data.leaderboard) {
           setLeaderboard(res.data.leaderboard);
         }
-      } catch (err) {
-        // Keep fallback
-      } finally {
+      } catch (err) {} finally {
         setLoading(false);
       }
     }
@@ -36,22 +34,22 @@ export default function LeaderboardPage() {
   }, [sortBy]);
 
   return (
-    <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[#07070e] text-stone-100">
-      <div className="max-w-4xl mx-auto flex flex-col gap-6">
+    <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[#140e0a] text-[#2b1d0e]">
+      <div className="max-w-4xl mx-auto flex flex-col gap-6 font-cinzel">
 
-        {/* Page Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl border border-rpg bg-gradient-to-r from-[#121024] to-[#0a0914]">
+        {/* Page Parchment Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl border-2 border-[#593e28] bg-[#e8d7b5] shadow-xl">
           <div>
-            <h1 className="text-xl font-cinzel font-bold text-gold tracking-widest uppercase">
+            <h1 className="text-xl font-black text-[#3b2413] tracking-widest uppercase">
               Hall of Realm Heroes (Leaderboard)
             </h1>
-            <p className="text-xs text-rpg-muted font-crimson mt-1">
+            <p className="text-xs text-[#6e4e31] font-crimson mt-1">
               Top adventurers who have mastered real-world discipline and leveled up their stats
             </p>
           </div>
 
           {/* Sort Tabs */}
-          <div className="flex gap-1.5 p-1 rounded-lg bg-[#090812] border border-[#201d36]">
+          <div className="flex gap-1.5 p-1 rounded-lg bg-[#251d16] border border-[#593e28]">
             {[
               { id: "level", label: "By Level" },
               { id: "streak", label: "By Streak" },
@@ -60,10 +58,10 @@ export default function LeaderboardPage() {
               <button
                 key={tab.id}
                 onClick={() => setSortBy(tab.id)}
-                className={`px-3 py-1.5 rounded text-xs font-cinzel transition-all ${
+                className={`px-3 py-1.5 rounded text-xs font-bold transition-all ${
                   sortBy === tab.id
-                    ? "bg-amber-950/60 border border-amber-500/50 text-amber-400 font-bold"
-                    : "text-stone-400 hover:text-stone-200"
+                    ? "bg-[#593e28] text-[#f5ebd6] border border-[#8c643b]"
+                    : "text-stone-300 hover:text-white"
                 }`}
               >
                 {tab.label}
@@ -72,9 +70,9 @@ export default function LeaderboardPage() {
           </div>
         </div>
 
-        {/* Leaderboard Table */}
-        <div className="rounded-xl border border-rpg bg-[#0a0914] overflow-hidden shadow-2xl">
-          <div className="grid grid-cols-12 gap-2 p-3 border-b border-[#1f1d30] text-[10px] font-cinzel font-bold text-rpg-muted uppercase tracking-wider">
+        {/* Leaderboard Table Parchment */}
+        <div className="rounded-xl border-2 border-[#593e28] bg-[#ede1c4] overflow-hidden shadow-2xl">
+          <div className="grid grid-cols-12 gap-2 p-3 border-b-2 border-[#8c643b] bg-[#d9c49c] text-xs font-black text-[#4a2e16] uppercase tracking-wider">
             <div className="col-span-2 sm:col-span-1 text-center">Rank</div>
             <div className="col-span-5 sm:col-span-5">Adventurer</div>
             <div className="col-span-2 sm:col-span-2 text-center">Level</div>
@@ -82,9 +80,9 @@ export default function LeaderboardPage() {
             <div className="hidden sm:block sm:col-span-2 text-right">XP</div>
           </div>
 
-          <div className="divide-y divide-[#161428]">
+          <div className="divide-y divide-[#cdaf80]">
             {loading ? (
-              <div className="p-8 text-center text-xs text-rpg-muted font-cinzel">
+              <div className="p-8 text-center text-xs text-[#593e28] font-bold">
                 Querying realm archives...
               </div>
             ) : (
@@ -100,35 +98,35 @@ export default function LeaderboardPage() {
                     transition={{ delay: idx * 0.05 }}
                     className={`grid grid-cols-12 gap-2 items-center p-3.5 transition-colors ${
                       isCurrentUser
-                        ? "bg-amber-950/30 border-l-2 border-l-amber-400"
-                        : "hover:bg-white/[0.02]"
+                        ? "bg-[#c49339]/30 border-l-4 border-l-[#8c4b18]"
+                        : "hover:bg-[#e0cfab]"
                     }`}
                   >
                     {/* Rank Badge */}
                     <div className="col-span-2 sm:col-span-1 flex justify-center">
-                      {rank === 1 && <span className="w-7 h-7 rounded-full bg-amber-500/20 border border-amber-400 flex items-center justify-center font-cinzel font-bold text-gold text-xs">🥇 1</span>}
-                      {rank === 2 && <span className="w-7 h-7 rounded-full bg-slate-400/20 border border-slate-300 flex items-center justify-center font-cinzel font-bold text-slate-300 text-xs">🥈 2</span>}
-                      {rank === 3 && <span className="w-7 h-7 rounded-full bg-amber-800/20 border border-amber-700 flex items-center justify-center font-cinzel font-bold text-amber-600 text-xs">🥉 3</span>}
-                      {rank > 3 && <span className="text-xs font-cinzel font-bold text-rpg-muted">#{rank}</span>}
+                      {rank === 1 && <span className="w-8 h-8 rounded-full bg-[#c49339] border border-[#5c4028] flex items-center justify-center font-black text-stone-900 text-xs shadow">🥇 1</span>}
+                      {rank === 2 && <span className="w-8 h-8 rounded-full bg-[#a3b0be] border border-[#3e4854] flex items-center justify-center font-black text-stone-900 text-xs shadow">🥈 2</span>}
+                      {rank === 3 && <span className="w-8 h-8 rounded-full bg-[#b87d4b] border border-[#523318] flex items-center justify-center font-black text-stone-900 text-xs shadow">🥉 3</span>}
+                      {rank > 3 && <span className="text-xs font-black text-[#593e28]">#{rank}</span>}
                     </div>
 
                     {/* Adventurer Details */}
                     <div className="col-span-5 sm:col-span-5 flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-[#1b172b] border border-[#373152] flex items-center justify-center font-cinzel text-xs font-bold text-amber-400 shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-[#593e28] border border-[#3b2413] flex items-center justify-center text-xs font-black text-[#f5ebd6] shrink-0">
                         {item.name ? item.name.charAt(0) : "H"}
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className="text-xs font-cinzel font-bold text-stone-100 truncate">
+                          <p className="text-xs font-bold text-[#2b1d0e] truncate">
                             {item.name || item.username}
                           </p>
                           {isCurrentUser && (
-                            <span className="px-1.5 py-0.5 rounded text-[8px] font-bold bg-amber-500 text-stone-950 font-cinzel">
+                            <span className="px-1.5 py-0.5 rounded text-[8px] font-black bg-[#8c4b18] text-[#f5ebd6]">
                               YOU
                             </span>
                           )}
                         </div>
-                        <p className="text-[10px] text-rpg-muted font-crimson truncate">
+                        <p className="text-[10px] text-[#6e4e31] font-crimson font-semibold truncate">
                           {item.equippedTitle || item.class || "Shadow Warden"}
                         </p>
                       </div>
@@ -136,18 +134,18 @@ export default function LeaderboardPage() {
 
                     {/* Level */}
                     <div className="col-span-2 sm:col-span-2 text-center">
-                      <Badge variant="gold" size="xs">
+                      <span className="px-2 py-0.5 rounded text-xs font-black bg-[#593e28] text-[#f5ebd6]">
                         Lv. {item.level}
-                      </Badge>
+                      </span>
                     </div>
 
                     {/* Streak */}
-                    <div className="col-span-3 sm:col-span-2 text-center text-xs font-cinzel font-bold text-orange-400">
+                    <div className="col-span-3 sm:col-span-2 text-center text-xs font-black text-[#8c3b18]">
                       🔥 {item.streak} days
                     </div>
 
                     {/* XP */}
-                    <div className="hidden sm:block sm:col-span-2 text-right text-xs font-cinzel text-amber-400 tabular-nums">
+                    <div className="hidden sm:block sm:col-span-2 text-right text-xs font-bold text-[#6d4c2b] tabular-nums">
                       {(item.xp || 0).toLocaleString()} XP
                     </div>
                   </motion.div>
