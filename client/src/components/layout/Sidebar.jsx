@@ -18,7 +18,7 @@ export default function Sidebar({ activeId, onSelect }) {
 
   return (
     <>
-      {/* ── Desktop sidebar (Dark Slate Leather with Subtle Pirate Ship & Sea Background) ─────────────── */}
+      {/* ── Desktop sidebar (Dark Slate Leather with Vivid Pirate Ship & Sea Background) ─────────────── */}
       <aside
         className="hidden sm:flex flex-col shrink-0 w-16 lg:w-56 overflow-y-auto z-10 select-none shadow-2xl relative"
         style={{
@@ -28,14 +28,16 @@ export default function Sidebar({ activeId, onSelect }) {
         }}
         aria-label="Main navigation"
       >
-        {/* ── Subtle Pirate Ship & Sea Nautical Art Background Layer ── */}
+        {/* ── Vivid Pirate Ship & Sea Nautical Art Background Layer (High Opacity) ── */}
         <div
-          className="absolute inset-0 z-0 bg-cover bg-center pointer-events-none opacity-25"
+          className="absolute inset-0 z-0 bg-cover bg-center pointer-events-none opacity-80"
           style={{
             backgroundImage: "url('/assets/pirate_ship_sea_bg.jpg')",
-            mixBlendMode: "screen",
           }}
         />
+
+        {/* Darkening Gradient Overlay for crisp text contrast */}
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#141820]/75 via-[#0e121a]/65 to-[#0b0e14]/85 pointer-events-none" />
 
         {/* Nav items */}
         <nav className="flex flex-col gap-1.5 p-2 pt-4 flex-1 relative z-10">
@@ -54,10 +56,10 @@ export default function Sidebar({ activeId, onSelect }) {
                 aria-current={isActive ? "page" : undefined}
                 className={[
                   "relative flex items-center gap-3.5 rounded-lg px-3 py-3",
-                  "w-full text-left transition-all duration-200 group outline-none font-cinzel border backdrop-blur-xs",
+                  "w-full text-left transition-all duration-200 group outline-none font-cinzel border backdrop-blur-xs shadow-md",
                   isActive
-                    ? "bg-gradient-to-r from-[#2a3242]/90 to-[#1c222e]/90 border-[#c49339] text-amber-300 shadow-lg"
-                    : "bg-[#141820]/75 border-[#262c38] text-stone-300 hover:border-[#8c643b] hover:bg-[#1f2633]/90",
+                    ? "bg-gradient-to-r from-[#2a3242]/95 to-[#1c222e]/95 border-[#c49339] text-amber-300 shadow-xl"
+                    : "bg-[#141820]/80 border-[#262c38] text-stone-200 hover:border-[#8c643b] hover:bg-[#1f2633]/95",
                 ].join(" ")}
               >
                 {/* Active left gold indicator */}
@@ -71,7 +73,7 @@ export default function Sidebar({ activeId, onSelect }) {
                 {/* Icon */}
                 {Icon && (
                   <span className={["shrink-0 transition-colors p-1 rounded bg-[#0d1017] border border-[#2b3342]",
-                    isActive ? "text-amber-400 border-amber-500/50" : "text-stone-400 group-hover:text-amber-300"
+                    isActive ? "text-amber-400 border-amber-500/50" : "text-stone-300 group-hover:text-amber-300"
                   ].join(" ")}>
                     <Icon size={18} stroke="currentColor" />
                   </span>
@@ -100,7 +102,7 @@ export default function Sidebar({ activeId, onSelect }) {
 
         {/* Bottom character mini-display (Parchment Card) */}
         <div className="p-3 pb-5 relative z-10" style={{ borderTop: "2px solid #262c38" }}>
-          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg border bg-[#141820]/85 border-[#2b3342] backdrop-blur-xs">
+          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg border bg-[#141820]/90 border-[#2b3342] backdrop-blur-xs shadow-lg">
             <div
               className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-cinzel text-xs font-black text-[#2c1b0e]"
               style={{ background: "linear-gradient(180deg, #e5d1a7 0%, #cca972 100%)", border: "1.5px solid #5c4028" }}
@@ -109,7 +111,7 @@ export default function Sidebar({ activeId, onSelect }) {
             </div>
             <div className="hidden lg:block min-w-0">
               <p className="text-xs font-bold text-amber-300 truncate font-cinzel">{user.name}</p>
-              <p className="text-[10px] text-stone-400 truncate font-crimson">{user.equippedTitle || user.class}</p>
+              <p className="text-[10px] text-stone-300 truncate font-crimson">{user.equippedTitle || user.class}</p>
             </div>
           </div>
         </div>
