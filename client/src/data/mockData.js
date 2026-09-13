@@ -19,6 +19,30 @@ export const PLAYER = {
   ],
 };
 
+export const NEW_PLAYER_PRESET = {
+  name: "Novice Wanderer",
+  class: "Novice",
+  level: 1,
+  xp: 0,
+  currentXp: 0,
+  xpToNext: 100,
+  xpRequired: 100,
+  currency: 50,
+  gold: 50,
+  streak: 0,
+  title: "Novice Wanderer",
+  equippedTitle: "Novice Wanderer",
+  tier: "T1 Novice",
+  unallocatedStatPoints: 0,
+  stats: [
+    { key: "STR", label: "Strength",  value: 50, max: 100, color: "#ef4444" },
+    { key: "INT", label: "Intellect", value: 50, max: 100, color: "#3b82f6" },
+    { key: "FOC", label: "Focus",     value: 50, max: 100, color: "#a855f7" },
+    { key: "AGI", label: "Agility",   value: 50, max: 100, color: "#22c55e" },
+    { key: "VIT", label: "Vitality",  value: 50, max: 100, color: "#f97316" },
+  ],
+};
+
 export const QUESTS = [
   { id: "water",   name: "Drink Water",  blurb: "A humble cup for the road.",           difficulty: "ROUTINE" },
   { id: "bed",     name: "Make Bed",     blurb: "Order the chamber before dawn.",       difficulty: "ROUTINE" },

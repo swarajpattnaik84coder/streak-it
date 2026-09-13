@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import axiosInstance from "../api/axiosInstance.js";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useProgression } from "../lib/ProgressionContext";
 
 const DEFAULT_STORE_ITEMS = [
   { itemId: "potion_xp", name: "Elixir of Insight", description: "+250 XP bonus instantly & level boost", category: "booster", price: 200, icon: "🧪", statBonus: { key: "INT", amount: 2 } },
@@ -14,10 +15,13 @@ const DEFAULT_STORE_ITEMS = [
 
 export default function StorePage() {
   const { user, buyStoreItem } = useAuth();
+  const { state, spendGold } = useProgression();
   const [activeTab, setActiveTab] = useState("shop");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [items, setItems] = useState(DEFAULT_STORE_ITEMS);
   const [message, setMessage] = useState("");
+
+  const currentGold = state.gold ?? user?.currency ?? 0;
 
   useEffect(() => {
     async function fetchItems() {
@@ -33,8 +37,23 @@ export default function StorePage() {
 
   const handleBuy = async (item) => {
     setMessage("");
+    if (currentGold < item.price) {
+      setMessage(`Insufficient Gold. You need ${item.price} Gold.`);
+      setTimeout(() => setMessage(""), 4000);
+      return;
+    }
+
+    if ((user.inventory || []).includes(item.itemId)) {
+      setMessage("You already own this item!");
+      setTimeout(() => setMessage(""), 4000);
+      return;
+    }
+
+    // Deduct from global gold state
+    spendGold(item.price);
+
     const res = await buyStoreItem(item.itemId, item.price, item);
-    setMessage(res.message);
+    setMessage(res?.message || `Successfully purchased ${item.name}!`);
     setTimeout(() => setMessage(""), 4000);
   };
 
@@ -62,7 +81,7 @@ export default function StorePage() {
           <div className="flex items-center gap-3">
             <div className="px-4 py-2 rounded-lg bg-[#593e28] text-[#f5ebd6] text-center border border-[#8c643b]">
               <span className="text-xs font-black tabular-nums">
-                💰 {user.currency} Gold
+                💰 {currentGold} Gold
               </span>
             </div>
           </div>
@@ -132,7 +151,7 @@ export default function StorePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredItems.map((item) => {
               const isOwned = (user.inventory || []).includes(item.itemId);
-              const canAfford = user.currency >= item.price;
+              const canAfford = currentGold >= item.price;
 
               return (
                 <motion.div

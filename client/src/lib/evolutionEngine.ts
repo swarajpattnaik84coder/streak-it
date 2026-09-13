@@ -50,10 +50,11 @@ export interface ProgressionState {
   attributes: ProgressionAttributes;
   name: string;
   characterClass: string;
+  lastLevelUp?: { level: number; goldAwarded: number } | null;
 }
 
 export const TIERS: readonly TierEvolution[] = [
-  { id: 1, minLevel: 1,  maxLevel: 9,  name: "Rustic Recruit",    title: "Iron Squire" },
+  { id: 1, minLevel: 1,  maxLevel: 9,  name: "Novice",            title: "Novice Wanderer" },
   { id: 2, minLevel: 10, maxLevel: 19, name: "Steel Vanguard",    title: "Knight Protector" },
   { id: 3, minLevel: 20, maxLevel: 29, name: "Valyrian Champion", title: "King's Champion" },
   { id: 4, minLevel: 30, maxLevel: 39, name: "Lord Commander",    title: "Grand Marshal" },
@@ -272,10 +273,12 @@ export function ascend(state: ProgressionState): ProgressionState {
   }
   const nextLevel = state.nextLevel;
   const bump = nextLevel % 10 === 0 ? 6 : 3;
-  return buildProgressionState({
+  const isMilestone = nextLevel % 10 === 0;
+  const milestoneGold = isMilestone ? 250 : 100;
+  const nextState = buildProgressionState({
     level: nextLevel,
     xp: 0,
-    gold: state.gold,
+    gold: (state.gold ?? 0) + milestoneGold,
     unallocatedPoints: (state.unallocatedPoints ?? 0) + 1,
     spentPoints: state.spentPoints ?? 0,
     attributes: {
@@ -287,6 +290,11 @@ export function ascend(state: ProgressionState): ProgressionState {
     name: state.name,
     characterClass: state.characterClass,
   });
+
+  return {
+    ...nextState,
+    lastLevelUp: { level: nextLevel, goldAwarded: milestoneGold },
+  };
 }
 
 export function createInitialProgression(input: {
@@ -338,6 +346,8 @@ export function applyXpToState(
   let lvl = state.level;
   let xpToNext = state.xpToNext;
   let unallocatedPoints = state.unallocatedPoints ?? 0;
+  let levelUpBonusGold = 0;
+  let lastLevelUp: { level: number; goldAwarded: number } | null = null;
 
   // If at a gate lock level and XP is at cap, don't level up — just cap
   if (isGateLockLevel(lvl) && xp >= xpToNext) {
@@ -349,6 +359,14 @@ export function applyXpToState(
       lvl += 1;
       unallocatedPoints += 1;
       xpToNext = xpToAdvanceFrom(lvl);
+
+      // Gold Reward on Level-Up:
+      // - Regular Level-Up: +100 Gold bonus.
+      // - Milestone / Tier Gate (Lv 10, 20, 30...): +250 Gold bonus.
+      const isMilestone = lvl % 10 === 0;
+      const bonus = isMilestone ? 250 : 100;
+      levelUpBonusGold += bonus;
+      lastLevelUp = { level: lvl, goldAwarded: bonus };
 
       // If we hit a gate lock level, cap and stop
       if (isGateLockLevel(lvl)) {
@@ -362,10 +380,10 @@ export function applyXpToState(
     ? Object.fromEntries(state.trial.requirements.map((r) => [r.id, r.current]))
     : undefined;
 
-  return buildProgressionState({
+  const nextState = buildProgressionState({
     level: lvl,
     xp,
-    gold: state.gold + goldReward,
+    gold: state.gold + goldReward + levelUpBonusGold,
     unallocatedPoints,
     spentPoints: state.spentPoints ?? 0,
     attributes: {
@@ -376,4 +394,9 @@ export function applyXpToState(
     name: state.name,
     characterClass: state.characterClass,
   });
+
+  return {
+    ...nextState,
+    lastLevelUp,
+  };
 }

@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import axiosInstance from "../api/axiosInstance.js";
-import { PLAYER as DEFAULT_PLAYER } from "../data/mockData.js";
+import { PLAYER as DEFAULT_PLAYER, NEW_PLAYER_PRESET } from "../data/mockData.js";
 
 const AuthContext = createContext(null);
 
@@ -13,12 +13,27 @@ const DEFAULT_TASKS = [
 ];
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(DEFAULT_PLAYER);
+  const [user, setUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem("streak_user");
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return DEFAULT_PLAYER;
+  });
   const [tasks, setTasks] = useState(DEFAULT_TASKS);
   const [token, setToken] = useState(localStorage.getItem("streak_token") || null);
   const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [loading, setLoading] = useState(false);
   const [levelUpMessage, setLevelUpMessage] = useState(null);
+
+  // Sync user state to localStorage
+  useEffect(() => {
+    try {
+      if (user) {
+        localStorage.setItem("streak_user", JSON.stringify(user));
+      }
+    } catch {}
+  }, [user]);
 
   // Sync token to axios headers
   useEffect(() => {
@@ -84,13 +99,58 @@ export function AuthProvider({ children }) {
     try {
       const res = await axiosInstance.post("/auth/register", { username, email, password });
       setToken(res.data.token);
-      setUser(res.data.user);
+      const freshUser = {
+        ...NEW_PLAYER_PRESET,
+        ...res.data.user,
+        name: username || res.data.user?.name || "Novice Wanderer",
+        level: 1,
+        xp: 0,
+        currentXp: 0,
+        xpToNext: 100,
+        xpRequired: 100,
+        currency: 50,
+        gold: 50,
+        streak: 0,
+        title: "Novice Wanderer",
+        equippedTitle: "Novice Wanderer",
+        tier: "T1 Novice",
+      };
+      setUser(freshUser);
       setIsAuthenticated(true);
       setLoading(false);
+      try {
+        localStorage.removeItem("streak_player_progression");
+        localStorage.setItem("streak_user", JSON.stringify(freshUser));
+      } catch {}
       return { success: true };
-    } catch (err) {
+    } catch {
+      // Local fallback for new user registration
+      const freshUser = {
+        ...NEW_PLAYER_PRESET,
+        _id: "local_user_" + Date.now(),
+        username,
+        email,
+        name: username || "Novice Wanderer",
+        level: 1,
+        xp: 0,
+        currentXp: 0,
+        xpToNext: 100,
+        xpRequired: 100,
+        currency: 50,
+        gold: 50,
+        streak: 0,
+        title: "Novice Wanderer",
+        equippedTitle: "Novice Wanderer",
+        tier: "T1 Novice",
+      };
+      setUser(freshUser);
+      setIsAuthenticated(true);
       setLoading(false);
-      return { success: false, message: err.response?.data?.message || "Registration failed" };
+      try {
+        localStorage.removeItem("streak_player_progression");
+        localStorage.setItem("streak_user", JSON.stringify(freshUser));
+      } catch {}
+      return { success: true };
     }
   };
 
@@ -233,15 +293,21 @@ export function AuthProvider({ children }) {
     try {
       const res = await axiosInstance.post("/store/buy", { itemId });
       if (res.data && res.data.user) {
-        setUser(res.data.user);
+        const nextGold = res.data.user.currency ?? 0;
+        setUser((_prev) => ({
+          ...res.data.user,
+          currency: nextGold,
+          gold: nextGold,
+        }));
         return { success: true, message: res.data.message };
       }
-    } catch (err) {
+    } catch {
       // Fallback local buy
       let success = false;
       let msg = "";
       setUser((prev) => {
-        if (prev.currency < price) {
+        const cur = prev.currency ?? prev.gold ?? 0;
+        if (cur < price) {
           msg = `Insufficient Gold. You need ${price} Gold.`;
           return prev;
         }
@@ -252,7 +318,7 @@ export function AuthProvider({ children }) {
         success = true;
         msg = `Successfully purchased ${itemObj.name}!`;
 
-        let updatedStats = [...prev.stats];
+        let updatedStats = [...(prev.stats || [])];
         if (itemObj.statBonus && itemObj.statBonus.key) {
           updatedStats = updatedStats.map((s) =>
             s.key === itemObj.statBonus.key
@@ -261,9 +327,11 @@ export function AuthProvider({ children }) {
           );
         }
 
+        const nextCurrency = cur - price;
         return {
           ...prev,
-          currency: prev.currency - price,
+          currency: nextCurrency,
+          gold: nextCurrency,
           inventory: [...(prev.inventory || []), itemId],
           stats: updatedStats,
         };

@@ -10,8 +10,27 @@ import CharacterPage from "../../pages/CharacterPage.jsx";
 import VaultPage from "../../pages/VaultPage.jsx";
 import StorePage from "../../pages/StorePage.jsx";
 import AuthModal from "../auth/AuthModal.jsx";
-import { ProgressionProvider } from "../../lib/ProgressionContext";
+import { ProgressionProvider, useProgression } from "../../lib/ProgressionContext";
 import { AntiSpamProvider } from "../../lib/AntiSpamContext";
+
+function LevelUpToastBanner() {
+  const { levelUpToast } = useProgression();
+  if (!levelUpToast) return null;
+
+  return (
+    <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
+      <div
+        className="px-6 py-2.5 rounded-xl border-2 border-amber-400 font-cinzel font-black text-xs tracking-wider uppercase text-amber-200 shadow-[0_0_25px_rgba(245,158,11,0.65)] flex items-center gap-2.5"
+        style={{
+          background: "linear-gradient(180deg, #3d2310 0%, #1c0e05 100%)",
+        }}
+      >
+        <span className="text-base">🏆</span>
+        <span>{levelUpToast}</span>
+      </div>
+    </div>
+  );
+}
 
 export default function AppLayout() {
   const [activeNav, setActiveNav] = useState("calendar");
@@ -22,6 +41,7 @@ export default function AppLayout() {
   return (
     <ProgressionProvider>
       <AntiSpamProvider>
+        <LevelUpToastBanner />
         <div
           className="flex flex-col h-full overflow-hidden"
           style={{ background: "#07070e" }}
