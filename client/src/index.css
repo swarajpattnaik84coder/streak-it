@@ -1,10 +1,10 @@
-@import url("https://fonts.googleapis.com/css2?family=Almendra:ital,wght@0,400;0,700;1,400&family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=MedievalSharp&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Almendra:ital,wght@0,400;0,700;1,400&family=Cinzel+Decorative:wght@400;700;900&family=Eagle+Lake&family=Felipa&family=MedievalSharp&family=Pirata+One&family=Quintessential&display=swap");
 @import "tailwindcss";
 
 @theme {
-  --font-antiquarian:   "Antiquarian", "Cinzel Decorative", "MedievalSharp", "Almendra", "Cinzel", serif;
-  --font-cinzel:        "Antiquarian", "Cinzel Decorative", "MedievalSharp", "Cinzel", serif;
-  --font-crimson:       "Antiquarian", "Almendra", "Crimson Text", serif;
+  --font-treasure:      "Pirata One", "Eagle Lake", "Quintessential", "Felipa", "Almendra", "Cinzel Decorative", serif;
+  --font-cinzel:        "Pirata One", "Eagle Lake", "Quintessential", "Cinzel Decorative", "MedievalSharp", serif;
+  --font-crimson:       "Quintessential", "Felipa", "Eagle Lake", "Almendra", serif;
 
   /* Old Dusty Parchment & Antique Wood Palette */
   --color-rpg-gold:     #c49339;
@@ -32,7 +32,7 @@
   html, body, #root {
     height: 100%;
     overflow: hidden;
-    font-family: "Antiquarian", "Cinzel Decorative", "MedievalSharp", "Almendra", "Cinzel", serif;
+    font-family: "Pirata One", "Eagle Lake", "Quintessential", "Felipa", "Almendra", serif;
     background-color: #140e0a;
     background-image: 
       radial-gradient(circle at 50% 50%, rgba(36, 26, 18, 0.4) 0%, rgba(12, 8, 5, 0.95) 100%),
@@ -50,14 +50,15 @@
 
   * {
     box-sizing: border-box;
-    font-family: "Antiquarian", "Cinzel Decorative", "MedievalSharp", "Almendra", "Cinzel", serif;
+    font-family: "Pirata One", "Eagle Lake", "Quintessential", "Felipa", "Almendra", serif;
   }
 }
 
 @layer utilities {
-  .font-antiquarian { font-family: "Antiquarian", "Cinzel Decorative", "MedievalSharp", "Almendra", "Cinzel", serif; }
-  .font-cinzel      { font-family: "Antiquarian", "Cinzel Decorative", "MedievalSharp", "Cinzel", serif; }
-  .font-crimson     { font-family: "Antiquarian", "Almendra", "Crimson Text", serif; }
+  .font-treasure    { font-family: "Pirata One", "Eagle Lake", "Quintessential", serif; }
+  .font-script      { font-family: "Pirata One", "Eagle Lake", serif; }
+  .font-cinzel      { font-family: "Pirata One", "Eagle Lake", "Quintessential", "Cinzel Decorative", serif; }
+  .font-crimson     { font-family: "Quintessential", "Felipa", "Eagle Lake", "Almendra", serif; }
   .text-gold        { color: #c49339; }
   .text-gold-dim    { color: #8c6421; }
   .text-gold-bright { color: #f0c050; }
