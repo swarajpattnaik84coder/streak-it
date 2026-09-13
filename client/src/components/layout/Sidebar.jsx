@@ -18,18 +18,27 @@ export default function Sidebar({ activeId, onSelect }) {
 
   return (
     <>
-      {/* ── Desktop sidebar (Dark Slate Leather Badge Style) ─────────────── */}
+      {/* ── Desktop sidebar (Dark Slate Leather with Subtle Pirate Ship & Sea Background) ─────────────── */}
       <aside
-        className="hidden sm:flex flex-col shrink-0 w-16 lg:w-56 overflow-y-auto z-10 select-none shadow-2xl"
+        className="hidden sm:flex flex-col shrink-0 w-16 lg:w-56 overflow-y-auto z-10 select-none shadow-2xl relative"
         style={{
-          background: "linear-gradient(180deg, #181d26 0%, #12151d 100%)",
+          background: "linear-gradient(180deg, #161b24 0%, #0f121a 100%)",
           borderRight: "2px solid #3d2d1d",
           boxShadow: "4px 0 20px rgba(0,0,0,0.8)",
         }}
         aria-label="Main navigation"
       >
+        {/* ── Subtle Pirate Ship & Sea Nautical Art Background Layer ── */}
+        <div
+          className="absolute inset-0 z-0 bg-cover bg-center pointer-events-none opacity-25"
+          style={{
+            backgroundImage: "url('/assets/pirate_ship_sea_bg.jpg')",
+            mixBlendMode: "screen",
+          }}
+        />
+
         {/* Nav items */}
-        <nav className="flex flex-col gap-1.5 p-2 pt-4 flex-1">
+        <nav className="flex flex-col gap-1.5 p-2 pt-4 flex-1 relative z-10">
           {NAV_ITEMS.map((item, i) => {
             const Icon = ICONS[item.id];
             const isActive = activeId === item.id;
@@ -45,10 +54,10 @@ export default function Sidebar({ activeId, onSelect }) {
                 aria-current={isActive ? "page" : undefined}
                 className={[
                   "relative flex items-center gap-3.5 rounded-lg px-3 py-3",
-                  "w-full text-left transition-all duration-200 group outline-none font-cinzel border",
+                  "w-full text-left transition-all duration-200 group outline-none font-cinzel border backdrop-blur-xs",
                   isActive
-                    ? "bg-gradient-to-r from-[#2a3242] to-[#1c222e] border-[#c49339] text-amber-300 shadow-lg"
-                    : "bg-[#141820]/70 border-[#262c38] text-stone-300 hover:border-[#8c643b] hover:bg-[#1f2633]",
+                    ? "bg-gradient-to-r from-[#2a3242]/90 to-[#1c222e]/90 border-[#c49339] text-amber-300 shadow-lg"
+                    : "bg-[#141820]/75 border-[#262c38] text-stone-300 hover:border-[#8c643b] hover:bg-[#1f2633]/90",
                 ].join(" ")}
               >
                 {/* Active left gold indicator */}
@@ -90,8 +99,8 @@ export default function Sidebar({ activeId, onSelect }) {
         </nav>
 
         {/* Bottom character mini-display (Parchment Card) */}
-        <div className="p-3 pb-5" style={{ borderTop: "2px solid #262c38" }}>
-          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg border bg-[#141820] border-[#2b3342]">
+        <div className="p-3 pb-5 relative z-10" style={{ borderTop: "2px solid #262c38" }}>
+          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg border bg-[#141820]/85 border-[#2b3342] backdrop-blur-xs">
             <div
               className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 font-cinzel text-xs font-black text-[#2c1b0e]"
               style={{ background: "linear-gradient(180deg, #e5d1a7 0%, #cca972 100%)", border: "1.5px solid #5c4028" }}
