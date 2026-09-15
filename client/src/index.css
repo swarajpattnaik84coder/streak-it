@@ -88,6 +88,8 @@
   /* No scrollbar utility */
   .no-scrollbar   { scrollbar-width: none; }
   .no-scrollbar::-webkit-scrollbar { display: none; }
+  .scrollbar-none { scrollbar-width: none; -ms-overflow-style: none; }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
 
   /* Fantasy separator */
   .divider-fantasy {

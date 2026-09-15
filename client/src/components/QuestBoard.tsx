@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { Plus } from "lucide-react";
 import { useAntiSpam } from "../lib/AntiSpamContext";
@@ -152,6 +152,57 @@ export default function QuestBoard() {
   const [writs, setWrits] = useState<WritTask[]>(loadInitialWrits);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
+  // Drag-to-scroll and mouse wheel navigation
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const [isDown, setIsDown] = useState(false);
+  const isDownRef = useRef(false);
+  const startXRef = useRef(0);
+  const scrollLeftRef = useRef(0);
+  const hasDraggedRef = useRef(false);
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!sliderRef.current) return;
+    setIsDown(true);
+    isDownRef.current = true;
+    hasDraggedRef.current = false;
+    startXRef.current = e.pageX - sliderRef.current.offsetLeft;
+    scrollLeftRef.current = sliderRef.current.scrollLeft;
+  };
+
+  const handleMouseLeave = () => {
+    setIsDown(false);
+    isDownRef.current = false;
+  };
+
+  const handleMouseUp = () => {
+    setIsDown(false);
+    isDownRef.current = false;
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isDownRef.current || !sliderRef.current) return;
+    const x = e.pageX - sliderRef.current.offsetLeft;
+    const walk = (x - startXRef.current) * 1.8;
+    if (Math.abs(walk) > 5) {
+      hasDraggedRef.current = true;
+    }
+    sliderRef.current.scrollLeft = scrollLeftRef.current - walk;
+  };
+
+  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    if (e.deltaY !== 0 && sliderRef.current) {
+      sliderRef.current.scrollLeft += e.deltaY;
+    }
+  };
+
+  const handleClickCapture = (e: React.MouseEvent) => {
+    if (hasDraggedRef.current) {
+      e.stopPropagation();
+      e.preventDefault();
+      hasDraggedRef.current = false;
+    }
+  };
+
   // Sync to localStorage
   useEffect(() => {
     try {
@@ -246,7 +297,18 @@ export default function QuestBoard() {
       </div>
 
       {/* Horizontal scrolling strip */}
-      <div className="overflow-x-auto overflow-y-hidden flex flex-row flex-nowrap gap-4 pb-4 pt-1 scrollbar-thin">
+      <div
+        ref={sliderRef}
+        onMouseDown={handleMouseDown}
+        onMouseLeave={handleMouseLeave}
+        onMouseUp={handleMouseUp}
+        onMouseMove={handleMouseMove}
+        onWheel={handleWheel}
+        onClickCapture={handleClickCapture}
+        className={`scrollbar-none overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] overflow-y-hidden flex flex-row flex-nowrap gap-4 pb-4 pt-1 cursor-grab active:cursor-grabbing select-none ${
+          isDown ? "cursor-grabbing" : ""
+        }`}
+      >
         {writs.map((task, i) => (
           <WritCard
             key={task.id}
